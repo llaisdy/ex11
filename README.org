@@ -7,6 +7,25 @@ See the documentation in widgets/doc/ex11.html
 ** todo
 
 - Makefiles are hard coded for my FreeBSD setup.  Factor out the BSD/Linux platform-specifics
+- maybe have directories like ebin, src, c_src, etc.; have all erl compiled into a central ebin
+
+*** lib
+
+Remaining warnings:
+
+$ erlc -W ex11_lib_keyboard_driver.erl
+ex11_lib_keyboard_driver.erl:319: Warning: this clause cannot match because a previous clause at line 318 always matches
+ex11_lib_keyboard_driver.erl:321: Warning: this clause cannot match because a previous clause at line 320 always matches
+ex11_lib_keyboard_driver.erl:337: Warning: this clause cannot match because a previous clause at line 215 always matches
+ex11_lib_keyboard_driver.erl:354: Warning: this clause cannot match because a previous clause at line 353 always matches
+ex11_lib_keyboard_driver.erl:356: Warning: this clause cannot match because a previous clause at line 355 always matches
+
+$ erlc -W ex11_lib_xauth.erl
+ex11_lib_xauth.erl:26: Warning: Non-UTF-8 character(s) detected, but no encoding declared. Encode the file in UTF-8 or add "%% coding: latin-1" at the beginning of the file. Retrying with latin-1 encoding.
+
+$ erlc -W ex11_lib_utils.erl
+ex11_lib_utils.erl:23: Warning: Non-UTF-8 character(s) detected, but no encoding declared. Encode the file in UTF-8 or add "%% coding: latin-1" at the beginning of the file. Retrying with latin-1 encoding.
+
 
 *** Original Todo:
 

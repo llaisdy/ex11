@@ -6,7 +6,7 @@
 %% can share the same keyboard driver.
 
 %% ex11_lib_keyboard_driver:ensure_started(Display) is called
-%%   whenever a new X11 session is started
+%% whenever a new X11 session is started
 
 -export([ensure_started/1, analyse/1]).
 -import(ex11_lib, [xDo/2, eGetKeyboardMapping/2]).
@@ -27,17 +27,17 @@ ensure_started1(Display) ->
 	undefined ->
 	    register(ex11_lib_keyboard_driver, 
 		     spawn(fun() -> init(Display) end));
-	Pid ->
+	_Pid ->
 	    true
     end.
 
 init(Display) ->
     %% Ask the display for the Min and Max keycodes
-    {First,Last} = K = ex11_lib:get_display(Display, keycodes),
+    {First,Last} = ex11_lib:get_display(Display, keycodes),
     io:format("Min,max keycodes=~p,~p~n",[First,Last]),
     %% gte the keycodes
     {ok, {keys, Keys}} = xDo(Display, eGetKeyboardMapping(First,Last)),
-    Table = map(fun({I,Ks}) ->
+    Table = map(fun({_,Ks}) ->
 			Ks1 = map(fun key/1, Ks),
 			list_to_tuple(Ks1)
 	    end, Keys),

@@ -17,7 +17,7 @@ map(KeyCode, State) ->
     case map(KeyCode) of
 	undefined ->
 	    {unknown,KeyCode};
-	N when integer(N) ->
+	N when is_integer(N) ->
 	    %% lowercase letter 
 	    case is_shift(State) of
 		true ->
@@ -42,7 +42,7 @@ map(KeyCode, State) ->
 			false -> {char, X}
 		    end
 	    end;
-	Atom when atom(Atom) ->
+	Atom when is_atom(Atom) ->
 	    Atom
     end.
 
@@ -168,12 +168,8 @@ map(102) -> {arrow, right};
 map(104) -> {arrow, down};
 map(109) -> ctrl;
 map(113) -> altGR;
-map(X)  -> undefined.
+map(_)  -> undefined.
 
-    
-    
-
-    
 
 %% Buttons
 
@@ -184,9 +180,4 @@ map(X)  -> undefined.
 %% 49  10 11  22
 %% Tab q w w er    ret
 %% 23  24          36 
-
-
-
-
-
 

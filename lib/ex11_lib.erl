@@ -171,13 +171,13 @@ reply(Pid, R) ->
 cast(Pid, Q) ->
     Pid ! Q.
 
-init(Pid, Screen) ->
+init(Pid, _Screen) ->
     %% Screen is the screen we were started with
     %% But I'll ignore this ...
     %% Do all initialisation here
     %% first we create a sub-window which is unmapped
     %% this is parent all GC's
-    Win = xVar(Pid, defaultWindow),
+    _Win = xVar(Pid, defaultWindow),
     xPen(Pid, "black",1,?black),
     xPen(Pid, "white",1,?white),
     Font   = xEnsureFont(Pid, "9x15"),
@@ -186,7 +186,7 @@ init(Pid, Screen) ->
 				 {fill_style, solid},
 				 {foreground, xColor(Pid, ?DarkBlue)}]),
     %% the dummy GC
-    GC =  xCreateNamedGC(Pid, dummyGC, [{function,copy},
+    _GC =  xCreateNamedGC(Pid, dummyGC, [{function,copy},
 					{line_width,1},
 					{line_style,solid},
 					{foreground, xColor(Pid, ?black)}]),
@@ -1055,12 +1055,12 @@ encode([], [], V, _, Bin) ->
     R = reverse(Bin),
     %% io:format("V=~p bin=~p~n",[V, R]),
     {V, list_to_binary(R)};
-encode([], L, V, _, Bin) ->
+encode([], L, _, _, _) ->
     exit({badOptionIn,eCreateWindow,L}).
 
 contains(Key,[{Key,Val}|L1], L2) -> {yes, Val, reverse(L2, L1)};
 contains(Key,[H|L1], L2)         -> contains(Key, L1, [H|L2]);
-contains(Key, [], _)             -> no.
+contains(_,  [], _)              -> no.
 
 %%----------------------------------------------------------------------
 
@@ -1089,17 +1089,17 @@ pReply1(eGetAtomName, <<_:64,Need:16,_:22/binary,S1/binary>>) ->
 	_ ->
 	    binary_to_list(S1)
     end;
-pReply1({eGetKeyboardMapping,First}, <<_:8,KeySymsPerKeycode:8,_:16,ReplyLen:32,_:192,
+pReply1({eGetKeyboardMapping,First}, <<_:8,KeySymsPerKeycode:8,_:16,_ReplyLen:32,_:192,
 			      Stuff/binary>>) ->
     Is = pKeySymbs(Stuff),
     io:format("KeySymsPerKeycode=~p~n",[KeySymsPerKeycode]),
     Parse = gather_keysyms(Is, First, KeySymsPerKeycode, []),
     {keys, Parse};
-pReply1(eListFonts, <<_:48,NumberOfFonts:16,_:176, B/binary>> = B1) ->
+pReply1(eListFonts, <<_:48, _NumberOfFonts:16,_:176, B/binary>>) ->
     %% 176 = 22 bytes of unused stuff ...
     %% io:format("Nfonts=~p~n", [NumberOfFonts]),
     %% Note Number of fonts usually is wrong so I don't retain it
-    Fonts = pFontList(B, []);
+    _Fonts = pFontList(B, []);
 pReply1(eQueryFont, <<_:64,
 		     MinBounds:12/binary,       % note the units of binary
 						% are inbytes
@@ -1123,8 +1123,8 @@ pReply1(eQueryFont, <<_:64,
     Cmax = pCharInfo(MaxBounds),
     {FontProps, T} = pFontProps(NFontProps, Rest, []),
     {CharInfos, _} = pCharInfos(NCharInfos, T, []),
-    NumberOfChars = MaxByte1 - MinByte1 + 1,
-    Found = length(CharInfos),
+    %% NumberOfChars = MaxByte1 - MinByte1 + 1,
+    %% Found = length(CharInfos),
     %% io:format("N Chars = ~p (~p..~p) found ~p descriptions~n",
     %% [NumberOfChars, MinByte1, MaxByte1, Found]),
     %% io:format("MinByte2=~p MaxByte2=~p~n",[MinByte2, MaxByte2]),
@@ -1148,7 +1148,7 @@ gather_keysyms(Is, First, N, L) ->
 
 take(0, T, L)     -> {reverse(L), T};
 take(N, [H|T], L) -> take(N-1, T, [H|L]);
-take(N, [], L)    -> {reverse(L), []}.
+take(_, [], L)    -> {reverse(L), []}.
 
 pFontProps(0, B, L) -> 
     {reverse(L), B};
@@ -1171,12 +1171,12 @@ pCharInfo(<<Left:?INT16,Right:?INT16,Width:?INT16,
 pCharInfo(B) ->
     io:format("Size Here=~p~n",[size(B)]).
 
-%% Parsing a font list is strange - sometimes the list
-%% appears to be truncated - this may indictae a bug or it may
-%% be that the documentation just doesn't work
-%% also the number of matching fonts seems wrong
+%% Parsing a font list is strange - sometimes the list appears to be
+%% truncated - this may indicate a bug or it may be that the
+%% documentation just doesn't work also the number of matching fonts
+%% seems wrong
 
-pFontList(<<N:16,B/binary>>, L) ->
+pFontList(<<_:16, B/binary>>, _) ->
     get_str(B, []).
 
 get_str(<<>>, L) ->
@@ -1212,13 +1212,13 @@ eParseEvent(keyPress, <<2:8,KeyCode:8,_:80,Win:32,_:96,State:16,_/binary>>) ->
     %% collating sequence ...
     {Win, {KeyCode,State}};
 eParseEvent(buttonPress,<<4:8,Button:8,
-	    _Seq:16,Time:32,_:32,Event:32,_:32,
+	    _Seq:16,_Time:32,_:32,Event:32,_:32,
 	    RootX:?INT16,RootY:?INT16,
 	    EventX:?INT16,EventY:?INT16,_/binary>>) ->
     %% pg 71
     {Event, {Button, EventX, EventY,RootX,RootY}};
 eParseEvent(buttonRelease,<<5:8,Button:8,
-	    _Seq:16,Time:32,_:32,Event:32,_:32,
+	    _Seq:16,_Time:32,_:32,Event:32,_:32,
 	    RootX:?INT16,RootY:?INT16,
 	    EventX:?INT16,EventY:?INT16,_/binary>>) ->
     %% pg 71
@@ -1275,4 +1275,3 @@ sleep(T) ->
 
 get_root_of_screen(Pid, Screen) -> rpc(Pid, {get_root_of_screen, Screen}).
 
-    

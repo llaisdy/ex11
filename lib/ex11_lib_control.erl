@@ -92,7 +92,7 @@ store1(Key, Val, Dict) ->
 
 sendLocalCmd({cast, Bin}) ->
     self() ! {sendCmd, Bin};
-sendLocalCmd(Other) ->
+sendLocalCmd(_) ->
     io:format("** illegal usage sendLocalCommand ***"),
     exit({internalError,ex11_lib_connect,sendLocalCmd}).
 
@@ -129,7 +129,7 @@ really_kill_window(Win, D0) ->
 	     error -> 
 		 %% io:format("Win ~p has no controlling process~n",[Win]),
 		 D0;
-	     {ok, Pid} ->
+	     {ok, _Pid} ->
 		 %% io:format("removing controller for ~p (was ~p)~n",
 		 %% [Win,Pid]),
 		 erase(Win, D0)
@@ -161,16 +161,16 @@ loop(Client, Driver, Seq, Display, D0, FreeIds) ->
 	    link(Pid),
 	    D1 = add_new_window(Pid, Wid, Parent, Depth, D0),
 	    loop(Client, Driver, Seq, Display, D1, FreeIds);
-	{addWindow, Pid, Type, Wid} ->
+	{addWindow, _Pid, _Type, _Wid} ->
 	    io:format("addWindow deprectiated~n"),
 	    loop(Client, Driver, Seq, Display, D0, FreeIds);
 	{From, id} ->
 	    reply(From, {self(), top}),
 	    loop(Client, Driver, Seq, Display, D0, FreeIds);
-	{From, {add_widget, Parent, Child}} ->
+	{_From, {add_widget, _Parent, _Child}} ->
 	    io:format("add_widget depreciated~n"),
 	    loop(Client, Driver, Seq, Display, D0, FreeIds);
-	{sendEventsIn, Win, to, Pid} ->
+	{sendEventsIn, _Win, to, _Pid} ->
 	    io:format("sendEventsIn depreciated~n"),
 	    loop(Client, Driver, Seq, Display, D0, FreeIds);
 	{From, {color, C}} ->
@@ -223,7 +223,7 @@ loop(Client, Driver, Seq, Display, D0, FreeIds) ->
 		    %% [ReplyType, size(R)]),
 		    Parse = ex11_lib:pReply(ReplyType, R),
 		    reply(From, {ok, Parse});
-		{reply, Seq1, R} ->
+		{reply, Seq1, _R} ->
 		    io:format("Reply with wrong sequence number:~p~n", [Seq1]),
 		    reply(From, {error, sync});
 		{error, Seq, E} ->
@@ -239,8 +239,7 @@ loop(Client, Driver, Seq, Display, D0, FreeIds) ->
 	    D1 = store(Key, Val, D0),
 	    reply(From, ack),
 	    loop(Client, Driver, Seq, Display, D1, FreeIds);
-	{event, Type, B} = E ->
-	    %% io:format("Event:~p~n",[E]),
+	{event, Type, B} ->
 	    case dispatchable_type(Type) of
 		true ->
 		    {Win, Parse} = ex11_lib:eParseEvent(Type, B),

@@ -234,7 +234,7 @@ convert_to_ascii([Num|Reversed],Number)when Num>-1, Num<10 ->
     convert_to_ascii(Reversed,[Num+48|Number]);
 convert_to_ascii([Num|Reversed],Number)when Num>9, Num<16 ->
     convert_to_ascii(Reversed,[Num+55|Number]);
-convert_to_ascii(NumReversed,Number) ->
+convert_to_ascii(_,_) ->
     error.
 
 getSize(Num)->
