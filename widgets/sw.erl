@@ -64,7 +64,7 @@ xStart(Vsn) ->
 
 %% mkWindow(Display, Pid, Wargs, Type)
 
-mkWindow(Display, Pid, Wargs, Type) when Type == top ; Type == child ->
+mkWindow(Display, _Pid, Wargs, Type) when Type == top ; Type == child ->
     io:format("mkWindow/4 depreciated~n"),
     #win{x=X,y=Y,width=Width,ht=Ht,color=Color,border=Border,cursor=Cursor,
 	 mask=Mask, parent=ParentWinId} = Wargs,
@@ -82,7 +82,7 @@ mkWindow(Display, Pid, Wargs, Type) when Type == top ; Type == child ->
     xFlush(Display),
     Wargs1.
 
-mkWindow(Display, Pid, Wargs) ->
+mkWindow(Display, _Pid, Wargs) ->
     #win{x=X,y=Y,width=Width,ht=Ht,color=Color,border=Border,cursor=Cursor,
 	 mask=Mask, parent=ParentWinId} = Wargs,
     Win = xCreateWindow(Display, ParentWinId, X, Y, Width, Ht, Border, 0, 0,
@@ -196,7 +196,7 @@ reply(Pid, R) ->
 generic({From, display}, Display, Wargs) ->
     reply(From, Display),
     Wargs;
-generic({From, mountPoint}, Display, Wargs) ->
+generic({From, mountPoint}, _Display, Wargs) ->
     Win = Wargs#win.win,
     reply(From, Win),
     Wargs;
@@ -263,7 +263,7 @@ generic({right,N}, Display, Wargs) ->
     xDo(Display, eConfigureWindow(Win, [{x,X1}])),
     xFlush(Display),
     Wargs1;
-generic({From, winfo}, Display, Wargs) ->
+generic({From, winfo}, _Display, Wargs) ->
     reply(From, Wargs),
     Wargs;
 generic({wider,N}, Display, Wargs) ->
@@ -295,16 +295,16 @@ generic({shorter,N}, Display, Wargs) ->
     xFlush(Display),
     Wargs1;
 generic(map, Display, Wargs) ->
-    #win{ht=X,win=Win} = Wargs,
+    #win{win=Win} = Wargs,
     xDo(Display, eMapWindow(Win)),
     xFlush(Display),
     Wargs#win{map=true};
 generic(unmap, Display, Wargs) ->
-    #win{ht=X,win=Win} = Wargs,
+    #win{win=Win} = Wargs,
     xDo(Display, eUnmapWindow(Win)),
     xFlush(Display),
     Wargs#win{map=false};
-generic(Event, Display, Wargs) ->
+generic(Event, _Display, Wargs) ->
     io:format("sw:generic skipping:~p~n", [Event]),
     Wargs.
 

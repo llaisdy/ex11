@@ -126,7 +126,7 @@ loop(Display,Pen0,GC,Wargs,Win,Canvas,Pens,L,Free,F,BPress,Clear) ->
 	{event,_,buttonPress,Args} ->
 	    BPress(Args),
 	    loop(Display,Pen0,GC,Wargs,Win,Canvas,Pens,L,Free,F,BPress,Clear);
-	{'EXIT', Pid, Why} ->
+	{'EXIT', _Pid, _Why} ->
 	    true;
 	{onClick, Fun1} ->
 	    loop(Display,Pen0,GC,Wargs,Win,Canvas,Pens,L,Free,F,Fun1,Clear);
@@ -169,13 +169,13 @@ loop(Display,Pen0,GC,Wargs,Win,Canvas,Pens,L,Free,F,BPress,Clear) ->
 	    loop(Display,Pen0,GC, Wargs, Win, Canvas, Pens, L3, Free,F,BPress,Clear);
 	Any ->
 	    %% Now we call the generic operators 
-	    Wargs1 = sw:generic(Any, Display, Wargs),
+	    _Wargs1 = sw:generic(Any, Display, Wargs),
 	    loop(Display,Pen0,GC, Wargs, Win, Canvas, Pens, L, Free, F, BPress, Clear)
     end.
 
 delete_obj(I, [{I,_}|T]) -> T;
 delete_obj(I, [H|T])     -> [H|delete_obj(I, T)];
-delete_obj(I, [])        -> [].
+delete_obj(_, [])        -> [].
 
 cdraw(Canvas, Pen, {line, X1, Y1, X2, Y2}) ->
     ePolyLine(Canvas, Pen, origin, [mkPoint(X1,Y1), mkPoint(X2,Y2)]);
@@ -211,15 +211,7 @@ cdraw(Canvas, Pen, {filledPoly, L}) ->
 	      map(fun({X,Y}) -> mkPoint(X,Y) end, L));
 cdraw(Canvas, Pen, {text, X, Y, Str}) ->
     ePolyText8(Canvas, Pen, X, Y, Str);
-cdraw(Canvas, Pem, X) ->
+cdraw(_Canvas, _Pen, X) ->
     io:format("Cannot draw:~p~n",[X]),
     {error, {eBadObj, X}}.
-
-    
-
-
-
-
-
-
 

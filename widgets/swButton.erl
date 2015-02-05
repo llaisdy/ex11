@@ -30,7 +30,6 @@ init(Parent, X, Y, Width, Ht, Color, Str) ->
 		 type=button, parent=Attach, 
 		 mask = ?EVENT_EXPOSURE bor ?EVENT_BUTTON_PRESS},
     Wargs1 = sw:mkWindow(Display, Parent, Wargs),
-    Win = Wargs1#win.win,
     Bin = draw_cmd(Display, Wargs1, Str),
     %% setup some handlers
     loop(Bin, Display, Wargs1, fun(_) -> void end).
