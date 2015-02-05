@@ -56,8 +56,8 @@ init(Parent, X, Y, W, H, Border, Color) ->
     GC1  = mkFace(Display, "9x15", ?red, ?white),
     GC2  = mkFace(Display, "9x15", ?white, ?black),
     GC3  = mkFace(Display, "9x15", ?black, ?white),
-    Bin1 = eImageText8(Win, GC1, 10, 18, "hello (1)"),
-    Bin2 = eImageText8(Win, GC2, 40, 50, "joe"),
+    _Bin1 = eImageText8(Win, GC1, 10, 18, "hello (1)"),
+    _Bin2 = eImageText8(Win, GC2, 40, 50, "joe"),
     F = fun(_) -> void end,
     %% Make the initial matrix
     S = mk_page(W, H, GC3),
@@ -95,20 +95,20 @@ blink(Display, Win, {on,I,J,Blink,Background}, S) ->
     end,
     xFlush(Display),
     {off,I,J,Blink,Background};
-blink(Display, Win, Disabled, S) ->
+blink(_Display, _Win, Disabled, _S) ->
     Disabled.
 
 move_blinker(I, J, Display, Win, Blink, S) ->
     case valid(I, J, S) of
 	true ->
-	    Blink1 = case element(1, Blink) of
-			 on ->
-			     blink(Display, Win, Blink, S);
-			 off ->
-			     Blink;
-			 disabled ->
-			     Blink
-		     end,
+	    _Blink1 = case element(1, Blink) of
+			  on ->
+			      blink(Display, Win, Blink, S);
+			  off ->
+			      Blink;
+			  disabled ->
+			      Blink
+		      end,
 	    %% Now it's off or disabled
 	    {_,_,_,G1,G2} = Blink,
 	    Blink2 = {off,I,J,G1,G2},
@@ -186,7 +186,7 @@ loop(Blink, Fb, Fk, Display, Win, Pens, Font, S, Wargs) ->
 		error ->
 		    exit({noPen,Name})
 	    end;
-	{'EXIT', Pid, Why} ->
+	{'EXIT', _Pid, _Why} ->
 	    true;
 	Any ->
 	    %% Now we call the generic operators 
@@ -206,15 +206,15 @@ trim(X, Str, {W,_,_}) ->
     end.
 
 remove(0, Str) -> Str;
-remove(N, [H|T]) -> remove(N-1, T).
+remove(N, [_|T]) -> remove(N-1, T).
 
-display(Display, Win, {W,H,Tup}) ->
+display(Display, Win, {_W,H,Tup}) ->
     %% statistics(runtime),
     display(Display, Win, H, 1, Tup).
     %% {_,Time} = statistics(runtime),
     %% io:format("Time=~p~n",[Time]).
 	
-display(Display, Win, 0, _, _) -> 
+display(Display, _, 0, _, _) -> 
     xFlush(Display);
 display(Display, Win, N, Y, Tup) ->
     E = element(Y, Tup),
@@ -263,7 +263,7 @@ expand([], _, _, L)      -> L.
 
 merge(A, B) -> merge(A, B, []).
 
-merge([{X,Tag,Val}=H1|T1], [{X,_,_}|T2], L) ->
+merge([{X,_,_}=H1|T1], [{X,_,_}|T2], L) ->
     merge(T1, T2, [H1|L]);
 merge([{X1,_,_}=H1|T1]=A1, [{X2,_,_}=H2|T2]=A2, L) ->
     if
@@ -288,7 +288,7 @@ combine([{X,Tag,C}|T], L) ->
     combine(T1, [{X,Tag,Seq}|L]).
 
 get_seq(X,Tag,[{X,Tag,Char}|T], L) -> get_seq(X+1,Tag,T,[Char|L]);
-get_seq(X, Tag, T, L)              -> {reverse(L), T}.
+get_seq(_, _, T, L)                -> {reverse(L), T}.
 
 %%--- end join ---
 
@@ -300,7 +300,7 @@ get_char(X, Y, {_W,_H,Tup}) ->
     %% => none, {Color, Value}
     get_char(X, element(Y, Tup)).
 
-get_char(X, [{Start,GC,Str}|T]) when Start > X ->
+get_char(X, [{Start,_,_}|_]) when Start > X ->
     none;
 get_char(X, [{Start,GC,Str}|T]) ->
     End = Start + length(Str) - 1,
@@ -311,7 +311,7 @@ get_char(X, [{Start,GC,Str}|T]) ->
 	true ->
 	    get_char(X, T)
     end;
-get_char(X, []) ->
+get_char(_, []) ->
     none.
 
 skip(0, [H|_]) -> H;

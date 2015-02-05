@@ -32,10 +32,10 @@ init(Parent, X, Y, Width, Ht, Border, Color1, Color2) ->
     Wargs = #win{x=X, y=Y, border=Border,width=Width,ht=Ht,color=Color1, 
 		 type=progressBar, parent=Attach},
     Wargs1 = sw:mkWindow(Display, Parent, Wargs),
-    Dir = if 
-	      Width > Ht -> horizontal;
-	      true -> vertical
-	  end,
+    _Dir = if 
+	       Width > Ht -> horizontal;
+	       true -> vertical
+	   end,
     Size = lists:min([Width,Ht]) - 4,
     %% Make a little rectangle
     ParentWin = Wargs1#win.win,
@@ -60,7 +60,7 @@ loop(Display, Rect, Wargs) ->
       	    xFlush(Display),
 	    loop(Display, Rect, Wargs);
 	X ->
-	    Wargs1 = sw:generic(X, Display, Wargs),
+	    _Wargs1 = sw:generic(X, Display, Wargs),
 	    loop(Display, Rect, Wargs)
     end.
 

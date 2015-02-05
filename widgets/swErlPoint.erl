@@ -77,14 +77,14 @@ loop(Display, Wargs, State, Pen0, Env0) ->
 	{event,_,expose, _} ->
 	    Env1 = display(Display, Wargs, State, Pen0, Env0),
 	    loop(Display, Wargs, State, Pen0, Env1);
-	{'EXIT', Pid, Why} ->
+	{'EXIT', _Pid, _Why} ->
 	    true;
 	{display, State1} ->
 	    self() ! {event,void,expose,void},
 	    loop(Display, Wargs, State1, Pen0, Env0);
 	Any ->
 	    %% Now we call the generic operators 
-	    Wargs1 = sw:generic(Any, Display, Wargs),
+	    _Wargs1 = sw:generic(Any, Display, Wargs),
 	    loop(Display, Wargs, State, Pen0, Env0)
     end.
 
@@ -101,7 +101,7 @@ display(Display, Wargs, State, Pen0, Env0) ->
     E1.
     
 
-do({face,Name,Color,FontName}, Display, Wargs, Win, E) ->
+do({face,Name,Color,FontName}, Display, _Wargs, _Win, E) ->
     case dict:find({face,Name}, E) of
 	{ok, {_, Color, FontName}} -> 
 	    E;
@@ -109,7 +109,7 @@ do({face,Name,Color,FontName}, Display, Wargs, Win, E) ->
 	    GC = mkFace(Display, FontName, Color),
 	    dict:store({face,Name}, {GC, Color, FontName} , E)
     end;
-do({pen,Name,Width,Color}, Display, Wargs, Win, E) ->
+do({pen,Name,Width,Color}, Display, _Wargs, Win, E) ->
     case dict:find({pen,Name}, E) of
 	{ok, {_,Width, Color}} ->
 	    E;
@@ -117,7 +117,7 @@ do({pen,Name,Width,Color}, Display, Wargs, Win, E) ->
 	    GC = mkPen(Display, Win, Width, Color),
 	    dict:store({pen,Name}, {GC, Width, Color}, E)
     end;
-do({text,Face,X,Y,Str}, Display, Wargs, Win, E) ->
+do({text,Face,X,Y,Str}, Display, _Wargs, Win, E) ->
     case dict:find({face,Face}, E) of
 	{ok, {GC,_,_}} ->
 	    xDo(Display, ePolyText8(Win, GC, X, Y, Str));
@@ -125,7 +125,7 @@ do({text,Face,X,Y,Str}, Display, Wargs, Win, E) ->
 	    io:format("Missing face:~p~n",[Face])
     end,
     E;
-do({rectangle,PenName,X,Y,Width,Ht}, Display, Wargs, Win, E) ->
+do({rectangle,PenName,X,Y,Width,Ht}, Display, _Wargs, Win, E) ->
     case dict:find({pen,PenName}, E) of
 	{ok, {GC,_,_}} ->
 	    B = ePolyFillRectangle(Win, GC,

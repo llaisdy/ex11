@@ -36,7 +36,7 @@ init(Pid, Display, Screen, Width, Ht, Color) ->
 		 ?EVENT_STRUCTURE_NOTIFY,
 		 screen=Screen},
     Wargs1 = sw:mkWindow(Display, Pid, Wargs),
-    Win = Wargs1#win.win,
+    _Win = Wargs1#win.win,
     process_flag(trap_exit, true),
     %Display1 = rpc(Display, display),
     io:format("Display=~p~n",[Display]),
@@ -57,9 +57,6 @@ loop(Display, Wargs, Pens, L, Fun, CFun) ->
 	    loop(Display, Wargs, Pens, L, Fun, CFun);
 	{event,_,configureNotify, X} ->
 	    CFun(X),
-	    loop(Display, Wargs, Pens, L, Fun, CFun);
-	{event,_,buttonPress, X} ->
-	    Fun(X),
 	    loop(Display, Wargs, Pens, L, Fun, CFun);
 	{newPen, Name, Color, Width} ->
 	    Win = Wargs#win.win,

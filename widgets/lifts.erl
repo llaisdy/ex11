@@ -36,7 +36,7 @@ handle_click({click, lift, N, But}, _, Lifts) ->
 
 loop(Pid) ->
     receive
-	Any ->
+	_ ->
 	    void
     end,
     loop(Pid).
@@ -143,14 +143,14 @@ move_doors({opening, N}, I, Pid) when N > 100 ->
 move_doors({opening, W}, I, Pid) ->
     Pid ! {setDoor, I, W+4},
     {opening, W+4};
-move_doors({opened, 8}, I, Pid) ->
+move_doors({opened, 8}, _I, _Pid) ->
     {closing, 100};
-move_doors({opened, N}, I, Pid) ->
+move_doors({opened, N}, _I, _Pid) ->
     {opened, N+1};
-move_doors(closed, I, Pid) ->
+move_doors(closed, _I, _Pid) ->
     closed.
 
-move_lift(Move={Dir, N}, I, Pos, Stop, Pid) ->
+move_lift(Move={_Dir, N}, I, Pos, Stop, Pid) ->
     DestY = y_floor(N),
     if
 	Pos > DestY ->
@@ -166,9 +166,9 @@ move_lift(Move={Dir, N}, I, Pos, Stop, Pid) ->
 	    Stop1 = delete(N, Stop),
 	    {{opening,0}, stopped, Pos, Stop1}
     end;
-move_lift(stopped, I, Pos, [], Pid) ->
+move_lift(stopped, _I, Pos, [], _Pid) ->
     {closed, stopped, Pos, []};
-move_lift(stopped, I, Pos, [K|T], Pid) ->
+move_lift(stopped, _I, Pos, [K|T], _Pid) ->
     DestY = y_floor(K),
     if 
 	Pos > DestY ->
@@ -176,7 +176,7 @@ move_lift(stopped, I, Pos, [K|T], Pid) ->
 	true  ->
 	    {closed, {down,K}, Pos, T}
     end;
-move_lift(Move, I, Pos, Stop, Pid) ->
+move_lift(Move, _I, Pos, Stop, _Pid) ->
     {closed, Move, Pos, Stop}.
 
 floor(N, Lifts, Pid) ->
@@ -201,9 +201,9 @@ phase2(N, L) ->
 
 choose_lift([{T1,P1}|T], Time, Ok) when T1 =< Time ->
     choose_lift(T, Time, [P1|Ok]);
-choose_lift(_, Time, [Pid]) ->
+choose_lift(_, _Time, [Pid]) ->
     Pid;
-choose_lift(_, Time, L) ->
+choose_lift(_, _Time, L) ->
     N = random:uniform(length(L)),
     lists:nth(N, L).
 
@@ -212,13 +212,13 @@ for(F, I, Max)   -> F(I), for(F, I+1,Max).
 
 delete(I, [I|T]) -> T;
 delete(I, [H|T]) -> [H|delete(I,T)];
-delete(I, [])    -> [].
+delete(_, [])    -> [].
 
-how_long(N, Dir, {Door, stopped, Pos, []}) ->
+how_long(N, _Dir, {Door, stopped, Pos, []}) ->
     Td = time_to_close_door(Door),
     Pos1 = y_floor(N),
     Diff = abs(Pos - Pos1),
-    T = Td + Diff * velocity();
+    Td + Diff * velocity();
 how_long(N, Dir, State) ->
     io:format("How_long to go to floor:~p Dir:~p State=~p~n",
 	      [N, Dir, State]),

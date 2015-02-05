@@ -42,7 +42,7 @@ loop(B, Display, Wargs) ->
 	    Bin =  ePolyText8(Win, xVar(Display, sysFontId), 10, 18, Str),
 	    self() ! {event,void,expose,void},
 	    loop(Bin, Display, Wargs);
-	{'EXIT', Pid, Why} ->
+	{'EXIT', _Pid, _Why} ->
 	    true;
 	Any ->
 	    %% Now we call the generic operators 

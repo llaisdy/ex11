@@ -40,8 +40,7 @@ make(Parent, X, Y, Width, Ht, Border, Color) ->
     spawn_link(fun() -> init(Parent,  X, Y, Width, Ht, Border, Color) end).
 
 
-init(Win,  X, Y, WidthChars, HtChars, Border, Color) ->
-    {Width, Ht} = sw:sizeInCols2pixels(WidthChars, HtChars),
+init(Win,  X, Y, WidthChars, HtChars, _Border, _Color) ->
     Text    = swColorText:make(Win, X, Y, WidthChars,HtChars,1,?white),
     File = "emacs.txt",
     Lines = read_file(File),
@@ -49,6 +48,7 @@ init(Win,  X, Y, WidthChars, HtChars, Border, Color) ->
     S = self(),
     Text ! {onClick, fun(I) -> S ! {click, I} end},
     Text ! {onKey,   fun(I) -> S ! {key, I}  end},
+    %% {Width, Ht} = sw:sizeInCols2pixels(WidthChars, HtChars),
     %% Win ! {onReconfigure, fun({Width,Ht}) -> S ! {resized, Width, Ht} end},
     State = #e{text=Text, width=WidthChars,ht=HtChars,start=1,current=1,
 	       col=1,data=Lines, mode=emacs},

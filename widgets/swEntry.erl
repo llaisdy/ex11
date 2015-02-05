@@ -118,7 +118,7 @@ loop(Display, Wargs, Draw, Data, Fun) ->
 	    loop(Display, Wargs1, Draw, Data, Fun)
     end.
 
-fix_entry(Display, Entry, Data, Fun) ->
+fix_entry(Display, Entry, Data, _Fun) ->
     #e{width=Width, n=N, ht=Ht, str=Str} = Data,
     B = [ePolyText8(Entry, xGC(Display, "text"), 4, 15, Str)|
 	 sw:sunken_frame(Display, Entry, Width, Ht)],
@@ -133,25 +133,25 @@ fix_entry(Display, Entry, Data, Fun) ->
 %%----------------------------------------------------------------------
 %% keypress handler
 
-do_cmd({_,_,_,{char,13}}, Str, N, Max, Fun) ->
+do_cmd({_,_,_,{char,13}}, Str, _N, _Max, Fun) ->
     spawn(fun() -> Fun(Str) end),
     nothing;
-do_cmd({_,_,_,{char,8}}, Str, 0, Max,_) -> % backspace
+do_cmd({_,_,_,{char,8}}, _Str, 0, _Max, _) -> % backspace
     nothing;
-do_cmd({_,_,_,{char,8}}, Str, N, Max,_) ->    % backspace
+do_cmd({_,_,_,{char,8}}, Str, N, _Max, _) ->    % backspace
     {[_|Before], After} = split(Str, N, []),
     {N-1, reverse(Before, After)};
 do_cmd({_,_,Tag,{char,C}}, Str, N, Max, _) when Tag==none; Tag == shift->
     insert_char(C, Str, N, Max);
-do_cmd({_,_,_, {cmd,left}}, Str, N, Max, _) when N > 0 ->
+do_cmd({_,_,_, {cmd,left}}, Str, N, _Max, _) when N > 0 ->
     {N-1, Str};
-do_cmd({_,_,_, {keypad,left}}, Str, N, Max, _) when N > 0 ->
+do_cmd({_,_,_, {keypad,left}}, Str, N, _Max, _) when N > 0 ->
     {N-1, Str};
 do_cmd({_,_,_, {cmd,right}}, Str, N, Max, _) when N < length(Str), N < Max ->
     {N+1, Str};
 do_cmd({_,_,_, {keypad,right}}, Str, N, Max, _) when N < length(Str), N < Max ->
     {N+1, Str};
-do_cmd(C, _, _, _, _) ->
+do_cmd(_C, _, _, _, _) ->
     %% io:format("dropping:~p~n",[C]),
     nothing.
 
@@ -159,13 +159,13 @@ insert_char(C, Str, N, Max) when length(Str) < Max ->
     {Before,After} = split(Str, N, []),
     Str1 = reverse(Before, [C|After]),
     {N+1, Str1};
-insert_char(C, Str, N, Max) ->
+insert_char(_C, Str, N, _Max) ->
     {N, Str}.
 
 split(Str, 0, L)   -> {L, Str};
 split([H|T], N, L) -> split(T, N-1, [H|L]).
 
-nearest_character(X, Max) when X < 0 -> 0;
+nearest_character(X, _) when X < 0 -> 0;
 nearest_character(X, Max) ->
     N = (X-4) div 9,
     if 

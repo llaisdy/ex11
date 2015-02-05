@@ -25,17 +25,6 @@
 
 -define(bg, 16#ffffcc).
 
--record(e, {width,     % width
-	    ht,        % height,
-	    data,      % lines
-	    cx,        % X pos of cursor
-	    cy,        % Y pos of cursor
-	    text,      % Pid of the text Widget
-	    start,     % start line in lines of first row in buffer
-	    kill = [], % kill ring
-	    current,   % start of current line containg the cursor
-	    col}).     % index before the current line
-
 start() -> start("emacs.erl").
 
 start(File) ->
@@ -93,3 +82,4 @@ key_pressed({_,_, Mod, Cmd}, State) ->
 
 handle_key(none, {cmd, right}, _State) ->
     a.
+

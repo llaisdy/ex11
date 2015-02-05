@@ -30,7 +30,7 @@ start() -> start("emacs.erl").
 start(File) ->
     spawn(fun() -> win(File) end).
 		  
-win(File) ->
+win(_File) ->
     Display = xStart("3.2"), 
     Width = 700, Ht = 600,
     Win       = swTopLevel:make(Display, Width, Ht, ?bg),  
@@ -46,7 +46,7 @@ win(File) ->
     Selector3 ! {display,["10","20","30","40","50","60","70","80","90"]},
     Selector1 ! {display, Fonts},
     Selector1 ! {onClick, [right], 
-		 fun(Why, Str) -> 
+		 fun(_Why, Str) -> 
 			 menu1(Display, Selector1, Selector2, Selector3, Text, 
 			       Str) end},
     loop().
@@ -56,7 +56,7 @@ menu1(Display, Selector1, Selector2, Selector3, Text, Str1) ->
     Re = "-*-" ++ Str1 ++ "*-*-*-*-*-*-*-*-*-*-*-iso8859-1", 
     {ok, Fonts} = xDo(Display, eListFonts(100000, Re)),
     L1 = map(fun(I) ->
-		     [_,Name,Type,Style|_] = string:tokens(I, "-"),
+		     [_,_Name,Type,Style|_] = string:tokens(I, "-"),
 		     Type ++ "-" ++ Style
 	     end, Fonts),
     Types = sort(remove_duplicates(L1, [])),
@@ -77,13 +77,13 @@ menu2(right, Str1, Str2, S1, S2, S3, Text, Display) ->
 	  fun(Why, Str3) ->
 		  menu3(Why, Str1, Str2, Str3, S1, S2, S3, Text, Display)
 	  end};
-menu2(left, Str1, Str2, S1, S2, S3, Text, Display) ->
+menu2(left, _Str1, _Str2, S1, S2, _S3, _Text, _Display) ->
     S2 ! {mode, passive},
     S1 ! {mode, active};
 menu2(_, _, _, _, _, _, _, _) ->
     true.
 
-menu3(left, _, _, _, S1, S2, S3, Text, _) ->
+menu3(left, _, _, _, _S1, S2, S3, _Text, _) ->
     S2 ! {mode, active},
     S3 ! {mode, passive};
 menu3(right, Str1, Str2, Str3,_,_,_,Text, Display) ->
@@ -135,6 +135,4 @@ loop() ->
 	    io:format("top level received:~p~n",[Any]),
 	    loop()
     end.
-
-
 

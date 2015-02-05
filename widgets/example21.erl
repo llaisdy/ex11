@@ -178,7 +178,7 @@ left(B = #b{l1=[],l2=L2,flag=F,b2=B2,a2=A}) when B2 =/= []->
     %% move onto the previous line . no scroll
     {First,{Flag,Str}} = split_tail(B2),
     Line={F,L2},
-    A2x=[Line|A],
+    _A2x=[Line|A],
     B#b{l1=Str,l2=[],flag=Flag,b2=First,a2=[Line|A]};
 left(B) -> B.
 
@@ -244,7 +244,7 @@ nearest_line(N, Max) ->
 %%  [{Flag,Str}] Flag = true if the line terminates with CR
 %%  Str is <= Max
 
-split_into_lines([], Max, L) ->
+split_into_lines([], _, L) ->
     reverse(L);
 split_into_lines(Str, Max, L) ->
     {Next, Str1} = get_next(Str, Max, []),
@@ -261,23 +261,4 @@ get_next([H|T], N, L) ->
 
 first([_])   -> [];
 first([H|T]) -> [H|first(T)].
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

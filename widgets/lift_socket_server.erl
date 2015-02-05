@@ -19,7 +19,7 @@ run(Port) ->
 				     end,
 				     1000,
 				     0) of
-	{ok, Pid} ->
+	{ok, _Pid} ->
 	    true;
 	{error, Why} ->
 	    io:format("Error:~p~n", [Why]),
@@ -63,7 +63,7 @@ handle("\r\n" ++ T, L, Control) ->
     handle(T, [], Control);
 handle([H|T], L, Control) ->
     handle(T, [H|L], Control);
-handle([], L, Control) ->
+handle([], L, _Control) ->
     L.
 
 do_cmd([$L,N,N1,N2,N3], {Pid, _}) ->
@@ -82,7 +82,7 @@ do_cmd([$F,N,M,C], {Pid,_}) ->
     Lift = list_to_integer([N]),
     Floor = list_to_integer([M]),
     Pid ! {setFloorLamp, Lift, Floor, cmap(C)};
-do_cmd("H", {Pid, Socket}) ->
+do_cmd("H", {_Pid, Socket}) ->
     gen_tcp:send(Socket, 
 		 "Q         -- quit\n"
 		 "L<N><MMM> -- move lift  N to pos MMM (N=1..3 MMM=000..100)\n"
@@ -91,7 +91,7 @@ do_cmd("H", {Pid, Socket}) ->
 		 "FLFC      -- set floor lamp L=1..3 F=1..6 C=R|G|W\n");
 do_cmd("Q", _) ->
     exit(true);
-do_cmd(Str, {Pid,Socket}) ->
+do_cmd(Str, {_Pid,Socket}) ->
     io:format("Do cmd:~p~n",[Str]),
     gen_tcp:send(Socket, "Widget does not understand:" ++ "|" ++ Str ++ "|\n"),
     gen_tcp:send(Socket, "type H for help\n"),

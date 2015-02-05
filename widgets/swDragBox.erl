@@ -77,6 +77,6 @@ loop(Display,Wargs,Win, Size,X0,Y0,Xr,Yr, F) ->
 
 ok(XX, YY, {MaxX, MaxY}) when XX > 0, YY > 0, XX < MaxX, YY < MaxY ->
     true;
-ok(XX, YY,_) ->
+ok(_,_,_) ->
     false.
 

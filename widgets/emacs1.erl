@@ -157,12 +157,12 @@ split(N, X) -> split(N, X, []).
 
 split(0, X, L)     -> {reverse(L), X};
 split(N, [H|T], L) -> split(N-1, T, [H|L]);
-split(N, [], L)    -> {reverse(L), []}.
+split(_, [], L)    -> {reverse(L), []}.
 
 scroll(#e{current=C,start=Start} = State) when C < Start ->
     State#e{start=C};
-scroll(#e{current=C,start=Start,ht=H} = State) -> 
-    {X,Y} = where_is_cursor(State),
+scroll(#e{start=Start,ht=H} = State) -> 
+    {_X,Y} = where_is_cursor(State),
     if Y > H ->
 	    State#e{start=Start+1};
        true ->
@@ -199,7 +199,7 @@ control($d, State) ->
 control($e, #e{current=Line, data=Lines}=State) ->
     Len = length(lines:nth(Line, Lines)),
     State#e{col=Len+1};
-control(X, State) ->
+control(_, State) ->
     State.
 
 erase_to_eol(#e{current=Line, kill=K, col=Col, data=Lines}=State) ->
@@ -252,7 +252,7 @@ move_down(#e{current=Line, data=Lines} = State) ->
     end.
 
 
-move_left(#e{start=S,current=Line,col=Col,data=Lines} = State) ->
+move_left(#e{current=Line,data=Lines} = State) ->
     {XX,_} = where_is_cursor(State),
     if 
 	XX > 1 ->
@@ -268,7 +268,7 @@ move_left(#e{start=S,current=Line,col=Col,data=Lines} = State) ->
 	    end
     end.
 
-move_right(#e{start=S,current=Line,col=Col,data=Lines} = State) ->
+move_right(#e{current=Line,col=Col,data=Lines} = State) ->
     Str = lines:nth(Line, Lines),
     Len = length(Str),
     State1 = if 
@@ -352,7 +352,7 @@ display(#e{text=Text,width=W,ht=H,start=Start,current=Current,
 extract_lines(Start, N, Width, Lines) -> 
     extract_lines(Start, N, Width, Lines, []).
 
-extract_lines(Ln, 0, Width, Lines, Strs) ->
+extract_lines(_, 0, _, _, Strs) ->
     reverse(Strs);
 extract_lines(Ln, N, Width, Lines, Strs) ->
     Max = lines:count(Lines),
@@ -377,7 +377,7 @@ split1(Str, Width) ->
 
 take_chars(Str, 0, L)   -> {reverse(L), Str};
 take_chars([H|T], N, L) -> take_chars(T, N-1, [H|L]);
-take_chars([], N, L)    -> {reverse(L), []}.
+take_chars([], _, L)    -> {reverse(L), []}.
 
 add_lines(_, 0, Strs)     -> {Strs, 0};
 add_lines([H|T], N, Strs) -> add_lines(T, N-1, [H|Strs]);
@@ -413,7 +413,7 @@ click(X, Y, #e{text=Text,start=Ln,data=Lines,width=W}=S) ->
 
 %% Invarient Line Ln starts at line N on the screen
 
-locate_line(Ln, Len, Extra, W, Lines, N, X, N) ->
+locate_line(Ln, Len, Extra, W, _Lines, N, X, N) ->
     if 
         X > Len+1 ->
             {Ln, Len+Extra*(W+1)+1, Len+1, N};
@@ -451,8 +451,8 @@ locate_line(Ln, Len, Extra, W, Lines, N, X, Y) when Y > N ->
 %%  +---+---+
 %%  6   7   8
 
-xy2vcol(X, Y, Width) ->
-    (Y-1)*(Width+1) + X.
+%% xy2vcol(X, Y, Width) ->
+%%     (Y-1)*(Width+1) + X.
 
 vcol2xy(Vcol, Width) ->
     Y = (Vcol-1) div (Width + 1),

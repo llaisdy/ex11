@@ -95,11 +95,11 @@ file2textBuff({file,File}, Width) ->
 %% K = A*N + B
 %% 0 = A*0 + B
 %% Nlines-MaxHt = A*Ht + B
-%%  A = (Nlines-MaxHt)/Ht.
+%% A = (Nlines-MaxHt)/Ht.
 
-refresh(Display, Text, N,MaxHt, Ht, TextBuff, K0) ->
-%   A = (Nlines - MaxHt) / Ht,
- %  K = trunc(A*N),
+refresh(Display, Text, N,MaxHt, _Ht, TextBuff, K0) ->
+    %% A = (Nlines - MaxHt) / Ht,
+    %% K = trunc(A*N),
     K = N,
     if
 	K == K0 ->
@@ -118,9 +118,9 @@ refresh(Display, Text, N,MaxHt, Ht, TextBuff, K0) ->
 add_text(Widget, GC, Strs) ->
     add_text(Widget,GC,20,20,Strs).
 
-add_text(Widget, GC, X, Y, []) ->
+add_text(_, _, _, _, []) ->
     [];
-add_text(Widget, GC, X, Y,	[Str|T]) ->
+add_text(Widget, GC, X, Y, [Str|T]) ->
     %% io:format("Str=~p~n",[Str]),
     B = ePolyText8(Widget, GC, X, Y, Str),
     [B|add_text(Widget, GC, X, Y+15, T)].
@@ -163,10 +163,10 @@ split_lines([H|T], Max, L) ->
     L1 = split_line(H, Max, L),
     split_lines(T, Max, L1).
  
-split_line([], Max, L) -> [{start, []}|L];  %% empty lines
+split_line([], _, L)   -> [{start, []}|L];  %% empty lines
 split_line(H, Max, L)  -> split_line(start, H, Max, L).
 
-split_line(_, [], Max, L) ->
+split_line(_, [], _, L) ->
     L;
 split_line(Tag, Str, Max, L) ->
     {Line1, Str1} = split(Str, Max, []),
@@ -211,7 +211,7 @@ adjust(N, Hscreen, {text, Width, Before, After}) ->
 %%  N = desired set parameter
 %%  Free = #lines at the bottom
 
-skip(Hbuff, Hscreen, N) when Hbuff =< Hscreen  -> 0;
+skip(Hbuff, Hscreen, _) when Hbuff =< Hscreen  -> 0;
 skip(Hbuff, Hscreen, N) ->
     Free = Hbuff - N - Hscreen,
     if 
@@ -237,11 +237,11 @@ sizeOf({text,_,B,A}) ->
 %% beginning_text({text,_,B,A}) ->
 %%   map(fun({_,Str}) -> Str end, reverse(B)).
 
-take_n_from_after(N, {text, _, Before, After}) ->
+take_n_from_after(N, {text, _, _Before, After}) ->
     take_n_from_after1(N, After).
 
 take_n_from_after1(0, _) -> [];
-take_n_from_after1(N, [{Tag,Str}|T]) ->
+take_n_from_after1(N, [{_Tag,Str}|T]) ->
     [Str|take_n_from_after1(N-1, T)];
 take_n_from_after1(_, _) ->
     [].

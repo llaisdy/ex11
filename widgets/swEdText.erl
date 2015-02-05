@@ -19,8 +19,6 @@
 		   xVar/2]).
 -import(lists, [mapfoldl/3]).
 
-%% make(Parent, X, Y, Width, Ht, Border, Color) 
-
 make(Parent, X, Y, Width, Ht, Border, Color) -> 
     spawn_link(fun() -> init(Parent,  X, Y, Width, Ht, Border, Color) end).
 
@@ -34,7 +32,6 @@ init(Parent, X, Y, Width, Ht, Border, Color) ->
 		 mask = ?EVENT_EXPOSURE bor ?EVENT_BUTTON_PRESS
 		 bor ?EVENT_KEY_PRESS},
     Wargs1 = sw:mkWindow(Display, Parent, Wargs),
-    Win = Wargs1#win.win,
     GC =  xVar(Display, sysFontId),
     W = (Width - 20) div 9,
     H = (Ht - 20) div 18,
@@ -71,7 +68,7 @@ loop(Display, Wargs, GC, W, H, F1, F2, F3) ->
 	    loop(Display, Wargs, GC, W, H, F1, F, F3);
 	{onKey, F} ->
 	    loop(Display, Wargs, GC, W, H, F1, F2, F);
-	{'EXIT', Pid, Why} ->
+	{'EXIT', _Pid, _Why} ->
 	    true;
 	{From, size} ->
 	    reply(From, {size, W, H}),
@@ -84,7 +81,7 @@ loop(Display, Wargs, GC, W, H, F1, F2, F3) ->
 	    loop(Display, Wargs1, GC, W1, H1, F1, F2, F3);
 	Any ->
 	    %% Now we call the generic operators 
-	    Wargs1 = sw:generic(Any, Display, Wargs),
+	    _Wargs1 = sw:generic(Any, Display, Wargs),
 	    loop(Display, Wargs, GC, W, H, F1, F2, F3)
     end.
 

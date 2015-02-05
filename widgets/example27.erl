@@ -88,11 +88,11 @@ get_map() ->
 		map(fun({X,Y}) -> {X*Scale,Y*Scale} end, L)
 	end, Lines).
 
-f2i(Str) ->
-    case (catch list_to_float(Str)) of
-	{'EXIT', _} -> 0;
-	F -> trunc(F)
-    end.
+%% f2i(Str) ->
+%%     case (catch list_to_float(Str)) of
+%% 	{'EXIT', _} -> 0;
+%% 	F -> trunc(F)
+%%     end.
 
 loop(Canvas, Map, W, H, W1, H1) ->
     %% This is a bit sneaky

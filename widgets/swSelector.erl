@@ -46,13 +46,13 @@ make(Parent, X, Y, Width, Ht, Border, Color) ->
 
 
 init(Win,  X, Y, WidthChars, HtChars, Border, Color) ->
-    {Width, Ht} = sw:sizeInCols2pixels(WidthChars, HtChars),
     io:format("Win=~p XYRowcCols:~p~n",[Win,{X,Y,WidthChars,HtChars}]),
     Text        = swColorText:make(Win,X,Y,WidthChars,HtChars,Border,Color),
     S = self(),
     Text ! {onClick, fun(X1) -> S ! {click, X1} end},
     Text ! {onKey, fun(X1)   -> S ! {key, X1} end},
-%%  Win ! {onReconfigure, fun({Width,Ht}) -> S ! {resized, Width, Ht} end},
+    %% {Width, Ht} = sw:sizeInCols2pixels(WidthChars, HtChars),
+    %% Win ! {onReconfigure, fun({Width,Ht}) -> S ! {resized, Width, Ht} end},
     Lines = mk_menu(["",""]),
     State = #e{text=Text, width=WidthChars,exit=[],mode=passive,ht=HtChars,
 	       start=1,current=1,col=1, data=Lines},
@@ -123,7 +123,7 @@ loop(State, Freturn) ->
 	    loop(State1, Freturn);
 	{mode, passive} ->
 	    Pid = State#e.text,
-	    Win = rpc(Pid, mountPoint),
+	    _Win = rpc(Pid, mountPoint),
 	    State1 = State#e{mode=passive},
 	    display(State1),
 	    loop(State1, Freturn);

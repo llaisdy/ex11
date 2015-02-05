@@ -20,6 +20,16 @@ ex11_lib_keyboard_driver.erl:337: Warning: this clause cannot match because a pr
 ex11_lib_keyboard_driver.erl:354: Warning: this clause cannot match because a previous clause at line 353 always matches
 ex11_lib_keyboard_driver.erl:356: Warning: this clause cannot match because a previous clause at line 355 always matches
 
+*** widgets
+
+Remaining warnings:
+
+$ erlc -W emacs1.erl
+emacs1.erl:59: Warning: variable 'Ht' shadowed in 'fun'
+emacs1.erl:59: Warning: variable 'Width' shadowed in 'fun'
+
+$ erlc -W test1.erl
+test1.erl:43: Warning: no clause will ever match
 
 *** Original Todo:
 

@@ -77,7 +77,7 @@ loop(Display, Rect, Fun, OutVal, CursorPos, Wargs) ->
 	    loop(Display, Rect, Fun, OutVal, CursorPos, Wargs);
 	{onMove, Fun1} ->
 	    loop(Display, Rect, Fun1, OutVal, CursorPos, Wargs);
-	{'EXIT', Pid, Why} ->
+	{'EXIT', _Pid, _Why} ->
 	    exit(died);
 	Any ->
 	    %% Now we call the generic operators
@@ -85,13 +85,13 @@ loop(Display, Rect, Fun, OutVal, CursorPos, Wargs) ->
 	    loop(Display, Rect, Fun, OutVal, CursorPos, Wargs1)
     end.
 
-outputVal(horizontal, X, Y, X0, Y0, Width, Ht) ->
+outputVal(horizontal, X, _Y, _X0, _Y0, Width, _Ht) ->
     if
 	X >  0, X < Width -> X;
 	X >= Width -> Width;
 	X =< 0 -> 0
     end;
-outputVal(vertical, X, Y, X0, Y0, Width, Ht) ->
+outputVal(vertical, _X, Y, _X0, _Y0, _Width, Ht) ->
     if
 	Y >  0, Y < Ht -> Y;
 	Y >= Ht -> Ht;
@@ -109,12 +109,12 @@ outputVal(vertical, X, Y, X0, Y0, Width, Ht) ->
 %%    Thus B = 2
 %%    and  A = Width-Ht/Width
 
-cursorPos(horizontal, X, X0, Y0, Width, Ht) ->
+cursorPos(horizontal, X, _X0, _Y0, Width, Ht) ->
     A = (Width-Ht)/Width,
     B = 2,
     Pos = trunc(A*X + B),
     {x,Pos};
-cursorPos(vertical, Y, X0, Y0, Width, Ht) ->
+cursorPos(vertical, Y, _X0, _Y0, Width, Ht) ->
     A = (Ht-Width)/Ht,
     B = 2,
     Pos = trunc(A*Y + B),

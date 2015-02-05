@@ -88,10 +88,6 @@ update_hands(Display, Win, Pen, Size, Bin) ->
 	    end,
     Hour2 = Hour1 + Min/60,
     Min1  = Min + Sec/60,
-    Xc = Yc = Size div 2,
-    R0 = trunc(Size*0.1),
-    R1 = trunc(Size*0.3),
-    R3 = trunc(Size*0.7),
     %% draw the background face
     xDo(Display, Bin),
     %% draw the hands
@@ -156,7 +152,7 @@ draw({Display,Face,Pen, _}, {line, X1, Y1, X2, Y2}) ->
 draw({Display,Face,_,Text}, {text, X, Y, Str}) ->
     xDo(Display, ePolyText8(Face, Text, X,Y, Str)).
 
-for(I, J, F) when I > J -> true;
+for(I, J, _) when I > J -> true;
 for(I, J, F) ->
     F(I),
     for(I+1,J,F).
@@ -166,7 +162,7 @@ loop(Display, Wargs, Win, F) ->
 	{event,_,expose, _} ->
 	    F(),
 	    loop(Display, Wargs, Win, F);
-	{'EXIT', Pid, Why} ->
+	{'EXIT', _Pid, _Why} ->
 	    true;
 	Any ->
 	    %% Now we call the generic operators 
@@ -177,4 +173,3 @@ loop(Display, Wargs, Win, F) ->
 		loop(Display, Wargs, Win, F)
     end.
 
-    

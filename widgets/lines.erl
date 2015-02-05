@@ -113,7 +113,7 @@ grow_tree(H, Height, TotB, FullB, RestB) when H < Height ->
     {{LSz+RSz, {Left,Right}},TotB2,RestB2};
 grow_tree(H, H, 0, _, {0,_}=Empty=_RestB) ->
     {Empty,0,Empty};
-grow_tree(H,H,0,FullB,RestB) ->
+grow_tree(H,H,0,_FullB,RestB) ->
     {RestB,0,{0,[]}};
 grow_tree(H,H,1,FullB,{RestSz,_}=RestB) ->
     {{?BREAK+RestSz, {FullB, RestB}}, 0, {0,[]}};
@@ -125,15 +125,15 @@ size_array(N) ->
     FullBuckets = N div ?BREAK,
     case N rem ?BREAK of
 	0 ->
-	    {BMax, Height} = calc_sz(FullBuckets),
+	    {_BMax, Height} = calc_sz(FullBuckets),
 	    {FullBuckets, 0, Height};
 	RestLeaf ->
-	    {BMax, Height} = calc_sz(FullBuckets+1),
+	    {_BMax, Height} = calc_sz(FullBuckets+1),
 	    {FullBuckets, RestLeaf, Height}
     end.
 
 calc_sz(Buckets) ->
-    calc_sz(Buckets, Initial=2, Height=1).
+    calc_sz(Buckets, 2, 1).
 
 calc_sz(N, Sz, Height) when N =< Sz ->
     {Sz, Height};
@@ -156,9 +156,9 @@ nth(L, _) when L < 1 ->
     exit({out_of_range, nth, L});
 nth(L, {LMax, _}) when L > LMax ->
     exit({out_of_range, nth, L, LMax});
-nth(L, {LMax, List}) when is_list(List) ->
+nth(L, {_LMax, List}) when is_list(List) ->
     lists:nth(L, List);
-nth(L, {LMax, {Left = {LL, _}, Right}}) when L > LL ->
+nth(L, {_LMax, {{LL, _}, Right}}) when L > LL ->
     nth(L-LL, Right);
 nth(L, {_, {Left, _}}) ->
     nth(L, Left).
@@ -173,7 +173,7 @@ append(Line, {L, List}) when is_list(List), L < ?BREAK ->
     {L+1, List ++ [Line]};
 append(Line, {L, List}) when is_list(List) ->
     {L+1, {{L, List}, {1, [Line]}}};
-append(Line, {L, {Left = {LL1, L1}, Right}}) ->
+append(Line, {L, {Left, Right}}) ->
     NewRight = append(Line, Right),
     balance_left(L+1, Left, NewRight).
 
@@ -186,14 +186,14 @@ append(Line, {L, {Left = {LL1, L1}, Right}}) ->
 %%
 replace(Lno, _, _) when Lno < 1 ->
     exit({out_of_range, replace, Lno});
-replace(Lno, {L, _}, NewLine) when Lno > L ->
+replace(Lno, {L, _}, _NewLine) when Lno > L ->
     exit({out_of_range, replace, Lno});
 replace(Lno, {L, List}, NewLine) when is_list(List) ->
     {L, replace_nth(Lno, List, NewLine)};
-replace(Lno, {L, {Left={LL1, L1}, Right={LL2, L2}}}, NewLine) when Lno > LL1 ->
+replace(Lno, {L, {Left={LL1, _L1}, Right}}, NewLine) when Lno > LL1 ->
     NewRight = replace(Lno-LL1, Right, NewLine),
     {L, {Left, NewRight}};
-replace(Lno, {L, {Left={LL1,L1}, Right={LL2,L2}}}, NewLine) ->
+replace(Lno, {L, {Left, Right}}, NewLine) ->
     NewLeft = replace(Lno, Left, NewLine),
     {L, {NewLeft, Right}}.
 
@@ -205,7 +205,7 @@ replace(Lno, {L, {Left={LL1,L1}, Right={LL2,L2}}}, NewLine) ->
 %%
 insert(Lno, _, _) when Lno < 1 ->
     exit({out_of_range, insert, Lno});
-insert(Lno, {L, _}, NewLine) when Lno > L ->
+insert(Lno, {L, _}, _NewLine) when Lno > L ->
     exit({out_of_range, insert, Lno});
 insert(Lno, {L, List}, NewLine) when is_list(List) ->
     if L < ?BREAK ->
@@ -232,7 +232,7 @@ insert(Lno, {L, {Left, Right}}, NewLine) ->
 %%
 insert_after(Lno, _, _) when Lno < 0 ->
     exit({out_of_range, insert_after, Lno});
-insert_after(Lno, {L, _}, NewLine) when Lno > L ->
+insert_after(Lno, {L, _}, _NewLine) when Lno > L ->
     exit({out_of_range, Lno});
 insert_after(L, {L,_}=Array, NewLine) ->
     append(NewLine, Array);
@@ -284,7 +284,7 @@ delete(Lno, {N, {Left, Right = {N_Right,_}}}) ->
 
 convert_to_list({_, List}) when is_list(List) ->
     List;
-convert_to_list({L, {Left, Right}}) ->
+convert_to_list({_, {Left, Right}}) ->
     convert_to_list(Left) ++ convert_to_list(Right).
 
 convert_from_list(L) when is_list(L) ->
@@ -296,7 +296,7 @@ convert_from_list(L) when is_list(L) ->
 %%% internal functions
 %%% ===========================================================
 
-replace_nth(1, [H|T], X) ->
+replace_nth(1, [_|T], X) ->
     [X|T];
 replace_nth(N, [H|T], X) ->
     [H|replace_nth(N-1, T, X)].
@@ -311,7 +311,7 @@ insert_after_nth(1, [H|T], X) ->
 insert_after_nth(N, [H|T], X) ->
     [H|insert_after_nth(N-1, T, X)].
 
-delete_nth(1, [H|T]) ->
+delete_nth(1, [_|T]) ->
     T;
 delete_nth(N, [H|T]) ->
     [H|delete_nth(N-1, T)].
@@ -336,8 +336,8 @@ split_at(Pos, [H|T], Acc) ->
 
 balance_left(N_Tot, 
 	     Left = {N_Left, _}, 
-	     Right = {N_Right, {RLeft = {N_RLeft, _}, 
-				RRight = {N_RRight, _}}})  ->
+	     Right = {_N_Right, {RLeft = {N_RLeft, _}, 
+				 RRight = {N_RRight, _}}})  ->
     NewN_Left = N_Left + N_RLeft,
     if N_RRight > NewN_Left ->
 	    NewLeft = {NewN_Left, {Left, RLeft}},
@@ -350,8 +350,8 @@ balance_left(N_Tot, Left, Right) ->
     {N_Tot, {Left, Right}}.
 
 balance_right(N_Tot, 
-	     Left = {N_Left, {LLeft = {N_LLeft, _},
-			      LRight = {N_LRight, _}}}, 
+	     Left = {_N_Left, {LLeft = {N_LLeft, _},
+			       LRight = {N_LRight, _}}}, 
 	     Right = {N_Right, _})  ->
     NewN_Right = N_Right + N_LRight,
     if N_LLeft > NewN_Right ->
@@ -363,5 +363,4 @@ balance_right(N_Tot,
     end;
 balance_right(N_Tot, Left, Right) ->
     {N_Tot, {Left, Right}}.
-
 

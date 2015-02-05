@@ -39,8 +39,8 @@ win(Parent) ->
     draw(Canvas, black, {text,10,10,"Lift Simulator"}),
     Nfloors = 6,
     Lifts = mkLifts(Canvas, 3, Nfloors),
-    Width  = swScrollbar:make(Canvas, 10, 980, 60, 20, 1,  ?grey90, ?red),
-    Pos    = swScrollbar:make(Canvas, 730, 10, 20, 513, 1, ?grey90, ?red),
+    _Width  = swScrollbar:make(Canvas, 10, 980, 60, 20, 1,  ?grey90, ?red),
+    _Pos    = swScrollbar:make(Canvas, 730, 10, 20, 513, 1, ?grey90, ?red),
     Parent ! {self(), ack},
     Event = fun(Any) -> io:format("swLifts received:~p~n",[Any]) end,
     loop(Event, Lifts).
@@ -100,13 +100,11 @@ unselected() ->
 mkLifts(Canvas, NLifts, Nfloors) ->
     Up = ?MistyRose,
     Down = ?LightGoldenrod1,
-    S = self(),
     %% top lift button
     Bt = swButton:make(Canvas, 40,70,25,25,Down,"D"),
     mkEvent({click, floor, Nfloors, down}, Bt),
     %% middle lift buttons
     for(fun(I) ->
-		XX = 40,
 		YY = (I-1)*100 + 70,
 		B1 = swButton:make(Canvas, 10,YY,25,25,Up,"U"),
 		B2 = swButton:make(Canvas, 40,YY,25,25,Down,"D"),
@@ -145,7 +143,6 @@ mklift(I, Canvas, Nfloors) ->
     Rhs    = swProgressBar:make(Win, XX + 10+ W,YLift, W, W, 0,?white,?grey46),
     %% lift call buttons
     YY1 = Nfloors*(W+40) + 15,
-    S = self(),
     LiftLampsL = map(fun(J) ->
 			      XX1 = XX + (J-1)*26 - 9,
 			      B1 = swButton:make(Win, XX1, YY1, 25, 25, 

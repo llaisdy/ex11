@@ -26,7 +26,7 @@ init(Parent, X, Y, Width, Ht, Border, Color) ->
 		 border=Border,width=Width,ht=Ht,color=Color, 
 		 type=rectangle},
     Wargs1 = sw:mkWindow(Display, Parent, Wargs),
-    Win = Wargs1#win.win,
+    _Win = Wargs1#win.win,
     loop(Display, Wargs1).
 
 loop(Display, Wargs) ->
