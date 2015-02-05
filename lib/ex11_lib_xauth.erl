@@ -1,3 +1,5 @@
+%% coding: latin-1
+
 -module(ex11_lib_xauth).
 
 -author('tnt@home.se').
