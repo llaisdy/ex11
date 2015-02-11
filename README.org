@@ -11,7 +11,9 @@ See the documentation in widgets/doc/ex11.html
 
 *** unixdom
 
-C files not compiling
+C files:
+- APPS: compile with warnings
+- LIBS: not compiling (same error in both)
 
 *** lib
 
