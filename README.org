@@ -9,6 +9,10 @@ See the documentation in widgets/doc/ex11.html
 - Makefiles are hard coded for my FreeBSD setup.  Factor out the BSD/Linux platform-specifics
 - maybe have directories like ebin, src, c_src, etc.; have all erl compiled into a central ebin
 
+*** unixdom
+
+
+
 *** lib
 
 Remaining warnings:

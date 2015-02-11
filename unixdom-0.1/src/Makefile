@@ -74,11 +74,3 @@ tcp_echoserv: tcp_echoserv.c
 .c.so:
 	$(CC) $(CFLAGS) -fpic -shared -o $*.so $<
 
-
-
-
-
-
-
-
-

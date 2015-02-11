@@ -175,38 +175,38 @@ init({OwnerPid, NewPort, MasterSockPid}) ->
 %%          {stop, Reason, Reply, State}   | (terminate/2 is called)
 %%          {stop, Reason, State}            (terminate/2 is called)
 %%----------------------------------------------------------------------
-handle_call({stop}, From, State) ->
+handle_call({stop}, _From, State) ->
     {stop, normal, ok, State};
-handle_call({test}, From, State) ->
+handle_call({test}, _From, State) ->
     Reply = do_test(State#state.port),
     {reply, Reply, State};
-handle_call({knuthhash, Path}, From, State) ->
+handle_call({knuthhash, Path}, _From, State) ->
     Reply = do_knuthhash(Path, State#state.port),
     {reply, Reply, State};
-handle_call({connect, Path, OptList}, From, State) ->
+handle_call({connect, Path, OptList}, _From, State) ->
     Reply = do_connect(Path, OptList, State#state.port),
     {reply, Reply, State};
-handle_call({send, Packet}, From, State) ->
+handle_call({send, Packet}, _From, State) ->
     Reply = do_send_catch(Packet, State#state.port), %XXX catch
     {reply, Reply, State};
-handle_call({recv, Length}, From, State) ->
+handle_call({recv, Length}, _From, State) ->
     Reply = do_recv(Length, State#state.port), %XXX catch
     {reply, Reply, State};
-handle_call({close}, From, State) ->
+handle_call({close}, _From, State) ->
     Reply = do_close(State#state.port),
     {reply, Reply, State};
-handle_call({setopts, OptList}, From, State) ->
+handle_call({setopts, OptList}, _From, State) ->
     Reply = do_setopts(State#state.port, OptList),
     {reply, Reply, State};
-handle_call({listen, Path, OptList}, From, State) ->
+handle_call({listen, Path, OptList}, _From, State) ->
     case catch do_listen(State#state.port, Path, OptList) of
 	ok -> {reply, ok, State};
 	Else -> {stop, normal, Else, State}	% 'normal' for no logging
     end;
-handle_call({accept}, From, State) ->
+handle_call({accept}, _From, State) ->
     Reply = do_accept(State#state.port, State),
     {reply, Reply, State};
-handle_call({controlling_process, Owner, NewOwner}, From, State) ->
+handle_call({controlling_process, Owner, NewOwner}, _From, State) ->
     case State#state.owner of
 	Owner ->
 	    %% XXX Deliberately brittle link xfer for now.
@@ -216,7 +216,7 @@ handle_call({controlling_process, Owner, NewOwner}, From, State) ->
 	_ ->
 	    {reply, {error, eperm}, State}
     end;
-handle_call({getix}, From, State) ->
+handle_call({getix}, _From, State) ->
     Reply = do_getix(State#state.port),
     {reply, Reply, State}.
 
@@ -226,7 +226,7 @@ handle_call({getix}, From, State) ->
 %%          {noreply, State, Timeout} |
 %%          {stop, Reason, State}            (terminate/2 is called)
 %%----------------------------------------------------------------------
-handle_cast(Msg, State) ->
+handle_cast(_Msg, State) ->
     %%QQQ io:format("XXXYYYXXX ~w: ~s:handle_cast got ~w\n", [self(), ?MODULE, Msg]),
     {noreply, State}.
 
@@ -248,7 +248,7 @@ handle_info({unixdom_reply, Port, {error, closed}}, State) when is_port(Port) ->
     %% Forward Data to our owner proc.
     State#state.owner ! {unixdom, self(), closed},
     {noreply, State};    
-handle_info(Info, State) ->
+handle_info(_Info, State) ->
     %%QQQ io:format("XXXYYYXXX ~w: ~s:handle_info got ~w\n", [self(), ?MODULE, Info]),
     {noreply, State}.
 
@@ -257,7 +257,7 @@ handle_info(Info, State) ->
 %% Purpose: Shutdown the server
 %% Returns: any (ignored by gen_server)
 %%----------------------------------------------------------------------
-terminate(Reason, State) ->
+terminate(_Reason, State) ->
     State#state.port ! {self(),close},
     erl_ddll:unload_driver(?DRV_NAME),
     ok.
@@ -267,7 +267,7 @@ terminate(Reason, State) ->
 %% Purpose: Preserve server state across code upgrades
 %% Returns: {ok, NewState}
 %%----------------------------------------------------------------------
-code_change(OldVsn, State, Extra) ->
+code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 %%%----------------------------------------------------------------------
@@ -316,10 +316,10 @@ do_knuthhash(Path, Port) ->
 
 do_connect(Path, OptList, Port) ->
     case ctl_cmd(Port, ?UNIXDOM_REQ_OPEN, []) of
-	{ok, Foo} ->
+	{ok, _Foo} ->
 	    %%QQQ io:format("XXXYYYXXX: ctl_cmd(OPEN) = ~w\n", [Foo]),
 	    case ctl_cmd(Port, ?UNIXDOM_REQ_CONNECT, Path) of
-		{ok, Foo2} ->
+		{ok, _Foo2} ->
 		    %%QQQ io:format("XXXYYYXXX: ctl_cmd(CONNECT) = ~w\n", [Foo]),
 		    do_connect2(Port, OptList);
 		Error ->
@@ -382,7 +382,7 @@ do_recv(Length, Port) ->
 %%% Handle the case where the recv blocked for input.  The socket has been
 %%% put into the select/poll loop, so we'll be notified if something
 %%% happens.
-do_recv2(Length, Port) ->
+do_recv2(_Length, Port) ->
     %%QQQ io:format("XXXYYYXXX do_recv2: waiting for async response\n"),
     receive
 	{unixdom, Port, Packet} ->
@@ -408,7 +408,7 @@ do_setopts(Port, OptList) ->
     Options = encode_options(OptList),
     %%QQQ io:format("XXXYYYXXX: set_options: port = ~w, Options = ~w\n", [Port, Options]),
     case ctl_cmd(Port, ?UNIXDOM_REQ_SETOPTS, Options) of
-	{ok, Foo} ->
+	{ok, _Foo} ->
 	    %%QQQ io:format("XXXYYYXXX do_connect2: set opts res = ~w\n", [Foo]),
 	    ok;
 	Error ->
@@ -434,11 +434,11 @@ do_listen(Port, Path, OptList) ->
 	    throw(Error)
     end,
     case ctl_cmd(Port, ?UNIXDOM_REQ_OPEN, []) of
-	{ok, Foo} ->
+	{ok, _Foo} ->
 	    %%QQQ io:format("XXXYYYXXX: ctl_cmd(OPEN) = ~w\n", [Foo]),
 	    Arg = ?int32(?DEFAULT_BACKLOG) ++ [Path],
 	    case ctl_cmd(Port, ?UNIXDOM_REQ_BIND, Arg) of
-		{ok, Foo2} ->
+		{ok, _Foo2} ->
 		    %%QQQ io:format("XXXYYYXXX do_listen: bind res = ~w\n", [Foo2]),
 		    do_listen2(Port, OptList);
 		Error2 ->
@@ -538,7 +538,7 @@ ctl_cmd(Port, Cmd, Args) ->
         [?UNIXDOM_REP_OK | Reply]  -> {ok, Reply};
         [?UNIXDOM_REP_ERROR | Err] -> {error, list_to_atom(Err)};
 	{badarg, _Backtrace}       -> {error, badarg};
-        {'EXIT', E}                -> %%QQQ io:format("XXXYYYXXX ctl_cmd(~w, ~w, ~w): E = ~w\n", [Port, Cmd, Args, E]),
+        {'EXIT', _E}                -> %%QQQ io:format("XXXYYYXXX ctl_cmd(~w, ~w, ~w): E = ~w\n", [Port, Cmd, Args, E]),
 	                              {error, eXXXinval};
         E_                         -> {error, internalXXX, E_}
     end.
@@ -560,6 +560,6 @@ enc_opt({backlog, Size}) when is_integer(Size), Size >= 0 ->
     [?UNIXDOM_OPT_BACKLOG, ?int32(Size)];
 enc_opt(unlink_sock) ->
     ?UNIXDOM_OPT_IGNORE;			% Option not handled by driver
-enc_opt(Bogus) ->
+enc_opt(_) ->
     ?UNIXDOM_OPT_IGNORE.
 

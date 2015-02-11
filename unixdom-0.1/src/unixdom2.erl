@@ -27,10 +27,10 @@
 %% For internal use only, use at your peril!
 -export([getix/1]).
 
--record(state, {
-	  owner,				% Pid of owner process.
-	  port					% Port for our dll driver
-	 }).
+%% -record(state, {
+%% 	  owner,				% Pid of owner process.
+%% 	  port					% Port for our dll driver
+%% 	 }).
 
 %%%----------------------------------------------------------------------
 %%% API
@@ -71,7 +71,7 @@ connect(Sock, Path, OptList, Timeout) when is_port(Sock) ->
 %%% Normal return: ok | {error, ErrnoAtom}
 send(Sock, Packet) when is_port(Sock) ->
     send(Sock, Packet, ?Timeout).
-send(Sock, Packet, Timeout) when is_port(Sock) ->
+send(Sock, Packet, _Timeout) when is_port(Sock) ->
     do_send_catch(Packet, Sock).
 
 %%% Normal return: {ok, Data} | {error, closed} | {error, ErrnoAtom}
@@ -83,13 +83,13 @@ recv(Sock, Length, Timeout) when is_port(Sock) ->
 %%% Normal return: ok
 close(Sock) when is_port(Sock) ->
     close(Sock, ?Timeout).
-close(Sock, Timeout) when is_port(Sock) ->
+close(Sock, _Timeout) when is_port(Sock) ->
     do_close(Sock).
 
 %%% Normal return: ok
 setopts(Sock, OptList) when is_port(Sock) ->
     setopts(Sock, OptList, ?Timeout).
-setopts(Sock, OptList, Timeout) when is_port(Sock) ->
+setopts(Sock, OptList, _Timeout) when is_port(Sock) ->
     do_setopts(Sock, OptList).
 
 %%% Normal return: {ok, R}, R = OptValue | [OptValue, ...]
@@ -101,7 +101,7 @@ getopts(Sock, OptList, Timeout) when is_port(Sock) ->
 %%% Normal return: ok
 listen(Sock, Path, OptList) when is_port(Sock) ->
     listen(Sock, Path, OptList, ?Timeout).
-listen(Sock, Path, OptList, Timeout) when is_port(Sock) ->
+listen(Sock, Path, OptList, _Timeout) when is_port(Sock) ->
     do_listen(Sock, Path, OptList).
 
 %%% Normal return: {ok, Sock} | {error, ErrnoAtom}
@@ -111,7 +111,7 @@ accept(Sock, Timeout) when is_port(Sock) ->
     do_accept(Sock, Timeout).
 
 %%% Normal return: ok | {error, eperm}
-controlling_process(Sock, NewOwner) when is_port(Sock), pid(NewOwner) ->
+controlling_process(Sock, NewOwner) when is_port(Sock), is_pid(NewOwner) ->
     do_controlling_process(Sock, NewOwner).
 
 getix(Sock) when is_port(Sock) ->					% For internal use only!
@@ -163,12 +163,12 @@ do_knuthhash(Path, Port) ->
 
 do_connect(Path, OptList, Port, Timeout) ->
     case ctl_cmd(Port, ?UNIXDOM_REQ_OPEN, []) of
-	{ok, Foo} ->
+	{ok, _Foo} ->
 	    %%QQQ io:format("XXXYYYXXX: ctl_cmd(OPEN) = ~w\n", [Foo]),
 	    PathBin = binify(Path),
 	    case ctl_cmd(Port, ?UNIXDOM_REQ_CONNECT,
 			 <<Timeout:32, PathBin/binary>>) of
-		{ok, Foo2} ->
+		{ok, _Foo2} ->
 		    %%QQQ io:format("XXXYYYXXX: ctl_cmd(CONNECT) = ~w\n", [Foo]),
 		    do_connect2(Port, OptList);
 		{error, wouldblock} ->
@@ -249,7 +249,7 @@ do_recv(Length, Port, Timeout) ->
 %%% Handle the case where the recv blocked for input.  The socket has been
 %%% put into the select/poll loop, so we'll be notified if something
 %%% happens.
-do_recv2(Length, Port) ->
+do_recv2(_Length, Port) ->
     %%QQQ io:format("XXXYYYXXX do_recv2: waiting for async response\n"),
     receive
 	{unixdom, Port, Packet} ->
@@ -275,7 +275,7 @@ do_setopts(Port, OptList) ->
     Options = encode_options(OptList),
     %%QQQ io:format("XXXYYYXXX: set_options: port = ~w, Options = ~w\n", [Port, Options]),
     case ctl_cmd(Port, ?UNIXDOM_REQ_SETOPTS, Options) of
-	{ok, Foo} ->
+	{ok, _Foo} ->
 	    %%QQQ io:format("XXXYYYXXX do_connect2: set opts res = ~w\n", [Foo]),
 	    ok;
 	Error ->
@@ -285,7 +285,7 @@ do_setopts(Port, OptList) ->
 do_listen(Port, Path, OptList) ->
     %% XXX Is this being too defensive?
     case file:read_file_info(Path) of
-	{ok, Info} when record(Info, file_info),
+	{ok, Info} when is_record(Info, file_info),
 			Info#file_info.type == other ->
 	    case lists:member(unlink_sock, OptList) of
 		true ->
@@ -301,11 +301,11 @@ do_listen(Port, Path, OptList) ->
 	    throw(Error)
     end,
     case ctl_cmd(Port, ?UNIXDOM_REQ_OPEN, []) of
-	{ok, Foo} ->
+	{ok, _Foo} ->
 	    %%QQQ io:format("XXXYYYXXX: ctl_cmd(OPEN) = ~w\n", [Foo]),
 	    Arg = [<<?DEFAULT_BACKLOG:32>> | Path],
 	    case ctl_cmd(Port, ?UNIXDOM_REQ_BIND, Arg) of
-		{ok, Foo2} ->
+		{ok, _Foo2} ->
 		    %%QQQ io:format("XXXYYYXXX do_listen: bind res = ~w\n", [Foo2]),
 		    do_listen2(Port, OptList);
 		Error2 ->
@@ -439,14 +439,14 @@ unixdom_sync_input(Sock, Owner, Flag) ->
             Flag
     end.
 
-do_getopts(Sock, Opt, Timeout) when is_atom(Opt) ->
+do_getopts(Sock, Opt, _Timeout) when is_atom(Opt) ->
     case getopts(Sock, [Opt]) of
 	{ok, [{_, Value}]} ->
 	     {ok, Value};
 	Error ->
 	    Error
     end;
-do_getopts(Sock, OptList, Timeout) when is_list(OptList) ->
+do_getopts(Sock, OptList, _Timeout) when is_list(OptList) ->
     Req = encode_opts_req(OptList),
     case ctl_cmd(Sock, ?UNIXDOM_REQ_GETOPTS, Req) of
 	{ok, Res} ->
@@ -475,13 +475,14 @@ decode_getopt_res([H|T], Len, Acc) ->
 
 ctl_cmd(Port, Cmd, Args) ->
     case catch port_control(Port, Cmd, Args) of
-        [?UNIXDOM_REP_OK | Reply]  -> {ok, Reply};
-        [?UNIXDOM_REP_ERROR | Err] -> {error, list_to_atom(Err)};
-        [?UNIXDOM_REP_WOULDBLOCK | Err] -> {error, wouldblock};
-	{badarg, _Backtrace}       -> {error, badarg};
-        {'EXIT', {Reason, _Backtrace}}                -> %%QQQ io:format("XXXYYYXXX ctl_cmd(~w, ~w, ~w): Reason, _Backtrace= ~w, ~w\n", [Port, Cmd, Args, Reason, _Backtrace]),
-	                              {error, eXXXinval};
-        E_                         -> {error, internalXXX, E_}
+        [?UNIXDOM_REP_OK | Reply]         -> {ok, Reply};
+        [?UNIXDOM_REP_ERROR | Err]        -> {error, list_to_atom(Err)};
+        [?UNIXDOM_REP_WOULDBLOCK | _Err]  -> {error, wouldblock};
+	{badarg, _Backtrace}              -> {error, badarg};
+        {'EXIT', {_Reason, _Backtrace}}   ->
+	    %%QQQ io:format("XXXYYYXXX ctl_cmd(~w, ~w, ~w): Reason, _Backtrace= ~w, ~w\n", [Port, Cmd, Args, Reason, _Backtrace]),
+	    {error, eXXXinval};
+        E                         -> {error, internalXXX, E}
     end.
 
 encode_options(Opts) ->
@@ -501,7 +502,7 @@ enc_opt({backlog, Size}) when is_integer(Size), Size >= 0 ->
     [?UNIXDOM_OPT_BACKLOG, <<Size:32>>];
 enc_opt(unlink_sock) ->
     ?UNIXDOM_OPT_IGNORE;			% Option not handled by driver
-enc_opt(Bogus) ->
+enc_opt(_) ->
     ?UNIXDOM_OPT_IGNORE.
 
 encode_opts_req(L) ->
@@ -514,7 +515,7 @@ enc_opt_req_only(backlog) ->
     ?UNIXDOM_OPT_BACKLOG;
 enc_opt_req_only(unlink_sock) ->
     ?UNIXDOM_OPT_IGNORE;			% Option not handled by driver
-enc_opt_req_only(Bogus) ->
+enc_opt_req_only(_) ->
     ?UNIXDOM_OPT_IGNORE.
 
 binify(T) when is_binary(T) ->

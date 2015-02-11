@@ -82,13 +82,13 @@ init([]) ->
 %%          {stop, Reason, State}            (terminate/2 is called)
 %%----------------------------------------------------------------------
 handle_call({gethostbyname, H}, From, State) ->
-    {Port, NewState} = get_idle_port(State),
+    {Port, _NewState} = get_idle_port(State),
     ID = State#state.id,
-    Reply = start_gethostbyname(H, ID, Port),
+    _Reply = start_gethostbyname(H, ID, Port),
     PendingList = State#state.pending,
     Job = {ID, From},
     {noreply, State#state{pending = [Job|PendingList], id = next_id(ID)}};
-handle_call({status}, From, State) ->
+handle_call({status}, _From, State) ->
     Reply = {{port, State#state.port}, {idle, State#state.idle}, {pending, State#state.pending}},
     {reply, Reply, State}.
 
@@ -98,7 +98,7 @@ handle_call({status}, From, State) ->
 %%          {noreply, State, Timeout} |
 %%          {stop, Reason, State}            (terminate/2 is called)
 %%----------------------------------------------------------------------
-handle_cast(Msg, State) ->
+handle_cast(_Msg, State) ->
     {noreply, State}.
 
 %%----------------------------------------------------------------------
@@ -107,7 +107,7 @@ handle_cast(Msg, State) ->
 %%          {noreply, State, Timeout} |
 %%          {stop, Reason, State}            (terminate/2 is called)
 %%----------------------------------------------------------------------
-handle_info({Port, {data, [Response|Rest]}}, State) ->
+handle_info({_Port, {data, [Response|Rest]}}, State) ->
     {ID, Res} = get_response(Response, Rest),
     {From, NewPending, NewIdle} = get_from(ID, State),
     gen_server:reply(From, Res),
@@ -134,7 +134,7 @@ terminate(Reason, State) ->
 %% Purpose: Convert process state when code is changed
 %% Returns: {ok, NewState}
 %%----------------------------------------------------------------------
-code_change(OldVsn, State, Extra) ->
+code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 %%%----------------------------------------------------------------------
@@ -198,7 +198,7 @@ get_from(ID, State) ->
 	    {From, NewPending, Idle};
 	[] ->
 	    {self(), Pending, Idle};			% XXX bogus
-	Res ->
+	_ ->
 	    {self(), Pending, Idle}			% XXX bogus
     end.
 
