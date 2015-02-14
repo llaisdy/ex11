@@ -37,6 +37,7 @@ init(Display) ->
     io:format("Min,max keycodes=~p,~p~n",[First,Last]),
     %% gte the keycodes
     {ok, {keys, Keys}} = xDo(Display, eGetKeyboardMapping(First,Last)),
+    io:format("iau: not reporting unknown keys (see key/1 last clause)~n"),
     Table = map(fun({_,Ks}) ->
 			Ks1 = map(fun key/1, Ks),
 			list_to_tuple(Ks1)
@@ -64,14 +65,6 @@ loop(Table, First, Last) ->
 	    io:format("ex11_lib_keyboard_driver internal error:~p~n",[Other]),
 	    loop(Table, First, Last)
     end.
-
-
-prt(0) -> "0";
-prt(I) when I < 256 ->
-    [I];
-prt(I) ->
-    ex11_lib_utils:int2hex(I).
-
 
 
 %% Bit 1 = least significant bit
@@ -429,10 +422,5 @@ key(16#FFED) -> {cmd, hyper_L};
 key(16#FFEE) -> {cmd, hyper_R};
 
 key(X) ->
-    io:format("Unknown Key=~s~n",[prt(X)]),
+    %% io:format("Unknown Key=~s~n",[X]),
     {unknown, X}.
-
-		
-
-				   
-	    
