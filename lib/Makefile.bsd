@@ -30,17 +30,3 @@ clean:
 	rm -f *~ *.beam erl_crash.dump ex11_lib_read_jpeg 
 	rm -f ex11_lib_read_jpeg.o port_lib.o
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
