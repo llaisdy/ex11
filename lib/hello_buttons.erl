@@ -1,11 +1,12 @@
 -module(hello_buttons).
 
 %%% hello_buttons: demonstarates how to make a button widget
-%%  using ex11_lib
-%%  To run this program fgive the command
-%%     erl -s hello_buttons start
+%%% using ex11_lib
+%%%
+%%% To run this program give the command:
+%%% $ erl -s hello_buttons start
 
-%%  To *understand* this program read 
+%%% To *understand* this program read 
 
 %%% Created: 2003-12-29 by joe@sics.se
 
@@ -34,7 +35,6 @@
 -export([start/0]).
 
 -include("ex11_lib.hrl").
-
 
 
 start() -> 

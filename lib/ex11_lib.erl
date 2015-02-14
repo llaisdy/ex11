@@ -228,8 +228,8 @@ xCreateSimpleWindow(Display, X, Y, Width, Ht, Cursor, Bg) ->
 
 %% Note color is set differently
 
-xCreateSimpleWindow(Display, 
-		    Parent, X, Y, Width, Ht, BorderWidth, Cursor, Col, Mask) ->
+xCreateSimpleWindow(Display, Parent, X, Y, Width, Ht, BorderWidth,
+		    Cursor, Col, Mask) ->
     Opts = [{eventMask, Mask},
 	    {cursor,  xCreateCursor(Display, Cursor)},
 	    {backgroundPixel, Col}],
@@ -579,9 +579,9 @@ eCreatePixmap(Depth, PixMap, Drawable, Width, Ht) ->
 
 eCreateWindow(Depth, Wid, Parent, X, Y, Width, Ht, BorderWidth, Class,
 	      Visual, Opts) ->
-    %% io:format("eCreateWindow:~p~n",
-    %% [{Depth, Wid, Parent, X, Y, Width, Ht, BorderWidth, Class,
-    %% Visual, Opts}]),
+    io:format("eCreateWindow:~p~n",
+    [{Depth, Wid, Parent, X, Y, Width, Ht, BorderWidth, Class,
+    Visual, Opts}]),
     ClassOp = case Class of
 		  0 -> 0;
 		  copyFromParent -> 0;
@@ -750,10 +750,9 @@ req(Op, Bin)       -> {cast, pack_request(Op, 0, Bin)}.
 req(Op, Code, Bin) -> {cast, pack_request(Op, Code, Bin)}.
 
 pack_request(Op, Code, Bin) ->
-    %% io:format("pack_request Op=~p Code=~p Bin=~p~n",[Op,Code,Bin]),
     Bin1 = pad_bin(Bin),
     Len = (size(Bin1) div 4) + 1,
-	 %io:format("pack_request Op=~p Code=~p Len=~p Bin=~p~n",[Op,Code,Len,Bin]),
+    %% io:format("pack_request Op=~p Code=~p Len=~p Bin=~p~n",[Op,Code,Len,Bin]),
     <<Op:8,Code:8,Len:16,Bin1/binary>>.
 
 %% pad_bin(Bin) -> Bin'
