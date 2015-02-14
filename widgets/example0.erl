@@ -18,7 +18,7 @@ start() ->
     spawn(fun() -> win(examples1()) end).
 
 win(Examples) ->
-    Connection = xStart("3.1"),
+    Connection = xStart("3.3"),
     Ht = 35 * length(Examples) + 20,
     Win  = swTopLevel:make(Connection, 290, Ht, ?bg),
     add_examples(Win, 10, 10, 240, Examples),

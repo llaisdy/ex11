@@ -31,7 +31,7 @@ make() ->
     end.
 
 win(Parent) ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win0    = swTopLevel:make(Display, 645, 710, ?bg),
     Canvas  = swCanvas:make(Win0, 10,10,625,690,1,?LightCyan),
     Canvas ! {onClick,fun({_,X,Y,_,_})->io:format("Click ~p,~p~n",[X,Y]) end},

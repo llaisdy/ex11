@@ -31,7 +31,7 @@ start(File) ->
     spawn(fun() -> win(File) end).
 		  
 win(File) ->
-    Display = xStart("3.2"), 
+    Display = xStart("3.3"), 
     Width   = 500, Ht = 400,
     Win     = swTopLevel:make(Display, Width, Ht, ?bg),
     Text    = swErlPoint:make(Win, 10,10, Width-20, Ht-20,1,?azure),

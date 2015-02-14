@@ -22,7 +22,7 @@
 start() -> spawn(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win     = swTopLevel:make(Display, 460, 460, ?bg),
     Self = self(),
     Win ! {onClick, fun({_,X,Y,_,_}) ->

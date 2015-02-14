@@ -23,7 +23,7 @@ start() ->
 
 win() ->
     process_flag(trap_exit, true),
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win    = swTopLevel:make(Display, 450, 170, ?bg),
     io:format("top win=~p~n",[Win]),
     Win ! {onClick, fun({_,X,Y,_,_}) -> io:format("Click ~p,~p~n",[X,Y]) end},

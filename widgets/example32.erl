@@ -26,16 +26,16 @@ start() ->
     spawn(fun() -> win() end).
 		  
 win() ->
-    Display = xStart("3.2"), 
+    Display = xStart("3.3"), 
     Win     = swTopLevel:make(Display, 490, 470, ?bg),
     Win ! {onClick, fun(X) -> io:format("~p~n",[X]) end},
     Emacs1   = swEmacs:make(Win, 10,10, 50, 20,1,?white),
     Emacs1 ! {edit, "todo.txt"},
     Emacs2   = swEmacs:make(Win, 10,375, 50, 1,1,?white),
     Emacs2 ! {edit, "one.txt"},
-    Emacs3   = swEmacs:make(Win, 10,405, 20, 3,1,?white),
+    Emacs3   = swEmacs:make(Win, 10,405, 20, 3.3,?white),
     Emacs3 ! {edit, "three.txt"},
-    Emacs4   = swEmacs:make(Win, 211,405, 20, 3,1,?white),
+    Emacs4   = swEmacs:make(Win, 211,405, 20, 3.3,?white),
     Emacs4 ! {edit, "three.txt"},
     loop().
 

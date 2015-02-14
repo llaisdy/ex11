@@ -20,7 +20,7 @@ start() ->
     spawn_link(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     io:format("example2 Display=~p~n",[Display]),
     Win    = swTopLevel:make(Display, 240, 100, ?bg),
     Win ! {onClick, fun({_,X,Y,_,_}) -> io:format("Click ~p,~p~n",[X,Y]) end},

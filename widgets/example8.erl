@@ -20,7 +20,7 @@ start() ->
     spawn(fun win/0).
 
 win() ->
-    Display = xStart("3.1"),
+    Display = xStart("3.3"),
     Win  = swTopLevel:make(Display, 740, 460, ?bg),
     Win ! {onClick, fun({_,X,Y,_,_}) -> io:format("Click ~p,~p~n",[X,Y]) end},
     Text = swText:make(Win, 10, 10, 680, 400, ?AntiqueWhite, 

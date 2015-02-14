@@ -21,7 +21,7 @@ start() ->
     spawn(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     {First,Last} = K = ex11_lib:get_display(Display, keycodes),
     io:format("K=~p~n",[K]),
     {ok, {keys, Val}} = xDo(Display, eGetKeyboardMapping(First,Last)),

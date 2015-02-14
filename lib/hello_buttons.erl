@@ -41,7 +41,7 @@ start() ->
     spawn_link(fun() -> init() end).
 
 init() ->
-    {ok,Pid}   = xStart("3.2"),
+    {ok,Pid}   = xStart("3.3"),
     spawn(fun()  -> win1(Pid) end),
     spawn(fun()  -> win2(Pid) end),
     spawn(fun()  -> win3(Pid) end),

@@ -19,7 +19,7 @@ start() ->
     spawn(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win  =  swTopLevel:make(Display,800, 600, ?bg),
     X0 = 360, Y0=100,
     Dx1 = -150, Dy1 = 125,

@@ -25,7 +25,7 @@
 start() -> spawn(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     swBlinker:ensure_blinker(Display),
     edit(Display, 80, 24, 
 "This is a very simple editor.

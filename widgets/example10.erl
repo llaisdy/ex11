@@ -20,7 +20,7 @@
 start() -> spawn(fun shell/0).
 
 shell() ->
-    Display = xStart("3.1"),
+    Display = xStart("3.3"),
     Width = 650,
     Ht    = 350,
     Win   = swTopLevel:make(Display, Width, Ht, ?bg),

@@ -31,7 +31,7 @@ start(File) ->
     spawn(fun() -> win(File) end).
 		  
 win(_File) ->
-    Display = xStart("3.2"), 
+    Display = xStart("3.3"), 
     Width = 700, Ht = 600,
     Win       = swTopLevel:make(Display, Width, Ht, ?bg),  
     Win ! {onClick, fun(X) -> io:format("Pos=~p~n",[X]) end},

@@ -22,7 +22,7 @@
 start() -> spawn(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     XX = 40, YY=20,
     {Width, Ht} = sw:sizeInCols2pixels(XX, YY),
     Win     = swTopLevel:make(Display, Width+20, Ht+20, ?bg),

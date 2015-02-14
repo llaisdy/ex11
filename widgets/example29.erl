@@ -23,7 +23,7 @@ start() ->
     spawn_link(fun() -> win() end).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     P       = swLifts:make(),
     S = self(),
     P ! {onClick, fun(X) -> S ! X end},

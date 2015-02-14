@@ -8,7 +8,7 @@
 %% long as this license and the copyright notice above are preserved and
 %% not modified. There is no warranty for this software.
 
-%% started 2004-03-10 by joe@sics.se (Joe Armstrong)
+%% started 2004-03.30 by joe@sics.se (Joe Armstrong)
 
 
 -export([start/0]).
@@ -28,7 +28,7 @@ start() -> spawn(fun win/0).
 %% So make box that is 360 wide 180 high
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Width = 720,
     Ht = 360,
     Win     = swTopLevel:make(Display, Width+20,Ht+20, ?bg),

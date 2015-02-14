@@ -23,7 +23,7 @@ win() ->
     show_file("intro.txt").
 
 show_file(File) ->
-    Display = xStart("3.1"),
+    Display = xStart("3.3"),
     Width = 850,
     Ht = 650,
     Win  = swTopLevel:make(Display, Width, Ht, ?bg),

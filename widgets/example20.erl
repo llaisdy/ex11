@@ -21,7 +21,7 @@
 start() -> spawn(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win     = swTopLevel:make(Display, 400, 250, ?bg),
     Text    = swEdText:make(Win, 10,10,380,230,1,?white),
     S = self(),

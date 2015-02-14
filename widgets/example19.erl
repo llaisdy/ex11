@@ -20,7 +20,7 @@
 start() -> spawn(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win     = swTopLevel:make(Display, 400, 250, ?bg),
     XX = 10, YY=10,
     DragBar   = swDragBox  :make(Win, XX, YY,    260, 10, 1,?blue),

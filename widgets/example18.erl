@@ -29,7 +29,7 @@ win() ->
     Size=  18,
     Gap = 6, 
     Colors = colors(), 
-    Display = xStart("3.1"),
+    Display = xStart("3.3"),
     make_page(Display, Colors, Rows, Cols, Size, Gap),
     loop(Display).
 

@@ -19,7 +19,7 @@ start() ->
     spawn_link(fun win/0).
 
 win() ->
-    Display  = xStart("3.2"),
+    Display  = xStart("3.3"),
     Win      = swTopLevel:make(Display, 160, 130, ?bg),
     Button1  = swButton:make(Win, 10, 10, 120, 30, ?grey88, "blue"),
     Button2  = swButton:make(Win, 10, 40,120,30,?grey88, "green"),

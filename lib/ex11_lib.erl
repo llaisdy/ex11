@@ -10,9 +10,10 @@
 %% 2003-12-?? Original version by joe@sics.se
 %% 2004-02-15 Added initial support for using multiple screens
 %%            Frej Drejhammar <frej@stacken.kth.se>
+%% 2015-02-?? Various hackery
+%%            Ivan Uemlianin <ivan@llaisdy.com>
 
-
--define(Vsn, "3.1").
+-define(Vsn, "3.3").
 
 -export([colors/0,
 	 mkArc/6,

@@ -19,7 +19,7 @@ start() ->
     spawn_link(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win    = swTopLevel:make(Display, 350, 145, ?bg),
     Win ! {onClick, fun({_,X,Y,_,_}) -> io:format("Click ~p,~p~n",[X,Y]) end},
     _Label1  = swLabel:make(Win, 10, 10, 220, 30, 0, ?cornsilk, "First name:"),

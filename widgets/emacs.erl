@@ -40,7 +40,7 @@ start(File) ->
     spawn(fun() -> win(File) end).
 		  
 win(File) ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win     = swTopLevel:make(Display, 716, 390, ?bg),
     Text    = swEdText:make(Win, 10,10,696, 370,1,?white),
     Lines = read_file(File),

@@ -42,7 +42,7 @@ form_widget(S, Len, Labels) ->
     WidthEntry = 9*Len+20,
     Width = WidthEntry + WidthLabel+40,
     Ht = length(Labels)*30 + 65,
-    Display = xStart("3.1"),
+    Display = xStart("3.3"),
     Win  = swTopLevel:make(Display,Width, Ht, ?bg),
     {Pids,Y1} = mapfoldl(fun(Txt,Y) ->
 				 mkLabel1(Win, 10, Y, WidthLabel, Txt),

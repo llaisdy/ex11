@@ -19,7 +19,7 @@ start() ->
     spawn(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win  = swTopLevel:make(Display,800, 70, ?bg),
     Rect = swRectangle:make(Win, 10, 10, 50, 50, 1, ?red),
     loop(370, Rect).

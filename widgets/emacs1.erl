@@ -42,7 +42,7 @@ start(File) ->
     spawn(fun() -> win(File) end).
 		  
 win(File) ->
-    Display = xStart("3.2"), 
+    Display = xStart("3.3"), 
     XX = 80, YY=10,
     {Width, Ht} = sw:sizeInCols2pixels(XX, YY),
     Win     = swTopLevel:make(Display, Width+20, Ht+20, ?bg),

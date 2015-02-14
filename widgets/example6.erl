@@ -19,7 +19,7 @@ start() ->
     spawn_link(fun win/0).
 
 win() ->
-    Display = xStart("3.2"),
+    Display = xStart("3.3"),
     Win    = swTopLevel:make(Display, 230, 110, ?bg),
     Win ! {onClick, fun({_,X,Y,_,_}) -> io:format("Click ~p,~p~n",[X,Y]) end},
     Width  = swScrollbar:make(Win, 10, 10, 200, 20, 1, ?grey90, ?red),
