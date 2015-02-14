@@ -149,10 +149,6 @@ decode_reply(Client, <<_:32,Len:32,_/binary>> = Bin) ->
 dispatch(Client, <<1:8,_:8,Seq:16,_/binary>> = B) ->
     Client ! {reply, Seq, B}.
 
-%% iau: for now not using unix sockets: tcp only
-%% send({unix, S}, Bin) ->
-%%     unixdom2:send(S, Bin),
-%%     true;
 send({tcp, Fd}, Bin) ->
     %% io:format("[~w] Sending ~w bytes to server~n~p~n",
     %% [Seq, size(Bin), Bin]),

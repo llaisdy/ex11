@@ -21,10 +21,10 @@ ex11_lib_read_jpeg: ex11_lib_read_jpeg.o port_lib.o
 	gcc -o ex11_lib_read_jpeg ex11_lib_read_jpeg.o port_lib.o ${LIBS} -ljpeg
 
 test: all
-	erl -pa '../unixdom-0.1/ebin/' -s hello_world start
+	erl -s hello_world start
 
 test1: all
-	erl -pa '../unixdom-0.1/ebin/' -s hello_buttons start
+	erl -s hello_buttons start
 
 clean:
 	rm -f *~ *.beam erl_crash.dump ex11_lib_read_jpeg 

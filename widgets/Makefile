@@ -38,7 +38,7 @@ MODS =  sw \
 
 
 all: mods mapdata.bin
-	erl -pa '../lib' -pa '../unixdom-0.1/ebin/' -s example0 start
+	erl -pa '../lib' -s example0 start
 
 mods: ${MODS:%=%.beam}
 

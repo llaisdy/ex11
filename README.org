@@ -9,12 +9,6 @@ See the documentation in widgets/doc/ex11.html
 - Makefiles are hard coded for my FreeBSD setup.  Factor out the BSD/Linux platform-specifics
 - maybe have directories like ebin, src, c_src, etc.; have all erl compiled into a central ebin
 
-*** unixdom
-
-C files:
-- APPS: compile with warnings
-- LIBS: not compiling (same error in both)
-
 *** lib
 
 Remaining warnings:
@@ -37,7 +31,7 @@ emacs1.erl:59: Warning: variable 'Width' shadowed in 'fun'
 $ erlc -W test1.erl
 test1.erl:43: Warning: no clause will ever match
 
-*** Original Todo:
+** Original Todo:
 
 1) Fix GC's so they are allocated and de_allocated per-window
 

@@ -215,19 +215,6 @@ try_to_connect({Host, Display, Cookie}, Screen) ->
 	    Error
     end.
 
-%% iau: for now not using unix sockets: tcp only
-%% connect(unix, Display) ->
-%%     case (catch unixdom2:module_info()) of
-%%         {'EXIT',_} ->
-%%             {error,noUnixDomainSockets};
-%%         _ ->
-%% 	    io:format("Connecting to unix domain socket:~p~n",[Display]),
-%% 	    {ok, Sock} = unixdom2:start_link(),
-%% 	    Path = lists:flatten(io_lib:format("/tmp/.X11-unix/X~p", 
-%% 					       [Display])),
-%% 	    unixdom2:connect(Sock, Path, [{active,true}, binary]),
-%% 	    {ok, {unix, Sock}}
-%%     end;
 connect({ip,IP}, Display) ->
     io:format("Connecting to tcp port:~p~n",[6000+Display]),
     case gen_tcp:connect(IP, 6000+Display, [{packet,raw}, binary]) of
@@ -325,10 +312,6 @@ recv({tcp, Fd}) ->
     end.
 
 
-%% iau: for now not using unix sockets: tcp only
-%% send({unix, S}, Bin) ->
-%%     unixdom2:send(S, Bin),
-%%     true;
 send({tcp, Fd}, Bin) ->
     %% io:format("[~w] Sending ~w bytes to server~n~p~n",
     %% [Seq, size(Bin), Bin]),
