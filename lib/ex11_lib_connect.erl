@@ -65,9 +65,7 @@ start(Display) ->
 		    %% Get all the relevant entries from Xauth
 		    Es = ex11_lib_xauth:get_display( Xauth, DisplayNumber), 
 		    _ = map(fun({X,Y,_}) -> {X,Y} end, Es),
-		    %% io:format("Start Host=~p Es=~n~p~n",[Host,Es]),
 		    Try = tryList(Host, DisplayNumber, Es),
-		    %% io:format("Try these:~p~n",[Try]),
 		    case try_to_start(Try, ScreenNumber) of
 			error -> 
 			    {ok, HostName} = inet:gethostname(),
@@ -150,8 +148,9 @@ tryList1(everything, Display, Es) ->
 tryList1(none, Display, Es) ->
     %% If no hostname given look up the hostname
     {ok, HostName} = inet:gethostname(),
-    [{unix,Display,Code} || {unix,Name,Code}<-Es, matches(HostName,Name)] ++
-	[{{ip,"localhost"},Display,Code} || {ip,Name,Code}<-Es, Name == HostName];
+    io:format("iau: for now ignoring unix sockets; tcp only.~n"),
+    %% [{unix,Display,Code} || {unix,Name,Code}<-Es, matches(HostName,Name)] ++
+    [{{ip,"localhost"},Display,Code} || {ip,Name,Code}<-Es, Name == HostName];
 tryList1({host, "localhost"}, Display, Es) ->
     %% io:format("local host specified - checking my hostname~n"),
     {ok, HostName} = inet:gethostname(),
@@ -216,18 +215,19 @@ try_to_connect({Host, Display, Cookie}, Screen) ->
 	    Error
     end.
 
-connect(unix, Display) ->
-    case (catch unixdom2:module_info()) of
-        {'EXIT',_} ->
-            {error,noUnixDomainSockets};
-        _ ->
-	    io:format("Connecting to unix domain socket:~p~n",[Display]),
-	    {ok, Sock} = unixdom2:start_link(),
-	    Path = lists:flatten(io_lib:format("/tmp/.X11-unix/X~p", 
-					       [Display])),
-	    unixdom2:connect(Sock, Path, [{active,true}, binary]),
-	    {ok, {unix, Sock}}
-    end;
+%% iau: for now not using unix sockets: tcp only
+%% connect(unix, Display) ->
+%%     case (catch unixdom2:module_info()) of
+%%         {'EXIT',_} ->
+%%             {error,noUnixDomainSockets};
+%%         _ ->
+%% 	    io:format("Connecting to unix domain socket:~p~n",[Display]),
+%% 	    {ok, Sock} = unixdom2:start_link(),
+%% 	    Path = lists:flatten(io_lib:format("/tmp/.X11-unix/X~p", 
+%% 					       [Display])),
+%% 	    unixdom2:connect(Sock, Path, [{active,true}, binary]),
+%% 	    {ok, {unix, Sock}}
+%%     end;
 connect({ip,IP}, Display) ->
     io:format("Connecting to tcp port:~p~n",[6000+Display]),
     case gen_tcp:connect(IP, 6000+Display, [{packet,raw}, binary]) of
@@ -325,10 +325,10 @@ recv({tcp, Fd}) ->
     end.
 
 
-
-send({unix, S}, Bin) ->
-    unixdom2:send(S, Bin),
-    true;
+%% iau: for now not using unix sockets: tcp only
+%% send({unix, S}, Bin) ->
+%%     unixdom2:send(S, Bin),
+%%     true;
 send({tcp, Fd}, Bin) ->
     %% io:format("[~w] Sending ~w bytes to server~n~p~n",
     %% [Seq, size(Bin), Bin]),

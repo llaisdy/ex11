@@ -1,0 +1,55 @@
+* ex11 and unixdom
+
+How does ex11 use unixdom (unix domain sockets)?
+How can unixdom be replaced by procket and/or gen_unix?
+
+** nb errors
+
+1> sw:xStart("3.1").
+Trying Host=unix Display=0 Screen=0
+cannot connect reason:noUnixDomainSockets
+Trying Host={ip,"localhost"} Display=0 Screen=0
+Connecting to tcp port:6000
+Port opened sending cookie:
+Min,max keycodes=8,255
+KeySymsPerKeycode=7
+Unknown Key=1008FE21
+...
+Unknown Key=1008FF95
+<0.34.0>
+Flushing (forgotten xFlush() ???)
+
+** How does ex11 use unixdom?
+
+$ l unixdom-0.1/src/
+exp1.erl
+exp1_drv.c
+tcp_echoserv.c
+top.erl
+unixdom.erl
+unixdom.hrl
+unixdom2.erl
+unixdom_cat.c
+unixdom_drv.c
+unixdom_echosrv.c
+
+Only used in:
+
+lib/ex11_lib_connect.erl:    unixdom2:module_info()
+lib/ex11_lib_connect.erl:    unixdom2:start_link()
+lib/ex11_lib_connect.erl:    unixdom2:connect(Sock, Path, [{active,true}, binary])
+lib/ex11_lib_connect.erl:    unixdom2:send(S, Bin),
+
+lib/ex11_lib_driver.erl:    unixdom2:send(S, Bin),
+
+For now commented out and only using tcp sockets
+will reintroduce later, poss with procket/gen_unix [1]
+
+** refs
+
+[1]
+https://github.com/msantos/gen_unix
+https://github.com/msantos/procket
+
+
+
